@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FotoGrude · Ímãs personalizados com as suas fotos</title>
+<meta name="description" content="Ímãs de geladeira personalizados com as suas fotos. Kits de 6, 9, 12 ou mais ímãs. Envio para todo o Brasil, pagamento via Pix ou cartão.">
+<meta property="og:title" content="FotoGrude · Ímãs personalizados">
+<meta property="og:description" content="Suas memórias favoritas, na porta da geladeira.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23A21F52'/%3E%3Cpath d='M17.6 7.2a3.3 3.3 0 0 0-4.7 0l-.9.9-.9-.9a3.3 3.3 0 0 0-4.7 4.7l.9.9 4.7 4.5 4.7-4.5.9-.9a3.3 3.3 0 0 0 0-4.7z' fill='none' stroke='white' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#A21F52; --accent-dark:#7A1640; --ink:#1F1A1C; --muted:#4A4246;
+  --bg:#FBFAF7; --pink:#FCE3EC; --line:#E6E0DD; --gold:#F5C04A;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)} a:hover{color:var(--accent-dark)}
+h1,h2,.display{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-0.02em}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:1180px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:14px 26px;border-radius:999px;font-weight:700;font-size:17px;text-decoration:none;border:1.5px solid var(--ink);background:#fff;color:var(--ink);transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px);color:var(--ink)}
+.btn-accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-accent:hover{background:var(--accent-dark);color:#fff}
+.btn-dark{background:var(--ink);color:#fff;font-size:15px;padding:12px 18px}
+.btn-dark:hover{color:#fff;background:#000}
+
+/* Header */
+header .wrap{padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.logo-mark{width:40px;height:40px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.logo span{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.02em}
+nav{display:flex;flex-wrap:wrap;align-items:center;gap:20px;font-size:15px;font-weight:500}
+nav a.link{color:var(--ink);text-decoration:none}
+nav a.link:hover{color:var(--accent)}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:999px;border:1.5px solid var(--ink);color:var(--ink)}
+
+/* Hero */
+.hero{padding:48px 24px 80px;display:flex;flex-wrap:wrap;align-items:center;gap:56px}
+.hero-text{flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:24px}
+.tag{align-self:flex-start;background:var(--pink);color:#8A1A46;font-weight:700;font-size:14px;padding:8px 14px;border-radius:999px}
+.hero h1{font-size:clamp(40px,6vw,68px);line-height:1.02;letter-spacing:-0.03em}
+.lead{font-size:19px;line-height:1.6;color:var(--muted);max-width:520px}
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.perks{display:flex;flex-wrap:wrap;gap:20px;font-size:15px;color:var(--muted)}
+.perks span{display:inline-flex;align-items:center;gap:6px}
+.hero-art{flex:1 1 400px;min-width:0;display:flex;justify-content:center}
+.board{width:100%;max-width:440px;aspect-ratio:4/5;background:#E9EEF0;border-radius:28px;border:1px solid #D5DDE0;padding:36px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-content:center}
+.polaroid{background:#fff;padding:7px 7px 20px;border-radius:4px;box-shadow:0 6px 14px rgba(31,26,28,.14)}
+.polaroid div{aspect-ratio:1/1;border-radius:2px;background-size:cover;background-position:center}
+
+/* Seções */
+section.block{padding:96px 24px}
+.head{display:flex;flex-direction:column;gap:12px;max-width:640px;margin-bottom:48px}
+.head h2,.gifts h2,.faq h2{font-size:clamp(32px,4vw,48px)}
+.head p{font-size:18px;color:var(--muted)}
+.dark{background:var(--ink);color:#fff}
+.dark .head p{color:#D9D2D5}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.step{background:#2C2528;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:14px}
+.step .num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px;color:var(--gold)}
+.step h3{font-size:22px}
+.step p{font-size:16px;line-height:1.6;color:#D9D2D5}
+
+.plans{gap:20px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;display:flex;flex-direction:column;gap:16px}
+.plan h3{font-size:20px}
+.plan .qty{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px}
+.plan .price{font-size:22px;font-weight:700;color:var(--accent)}
+.plan .unit{font-size:15px;font-weight:500;color:var(--muted);margin-top:-10px}
+.plan.featured .unit{color:var(--pink)}
+.grid.plans{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid.plans .plan{padding:26px 22px}
+.grid.plans .qty{font-size:38px}
+.plan-top{flex-wrap:wrap}
+.plan .desc{font-size:15px;line-height:1.6;color:var(--muted);flex-grow:1}
+.plan .btn{font-size:16px}
+.plan.featured{background:var(--accent);border-color:var(--accent);color:#fff}
+.plan.featured .price{color:#fff}
+.plan.featured .desc{color:var(--pink)}
+.plan.featured .btn{border-color:#fff}
+.badge{background:var(--gold);color:var(--ink);font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px}
+.plan-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+.gifts{background:var(--pink);padding:88px 24px}
+.gifts h2{margin-bottom:40px}
+.gift-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.gift{background:#fff;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.gift h3{font-size:18px}
+.gift p{font-size:15px;line-height:1.5;color:var(--muted)}
+
+.faq .wrap{max-width:820px}
+.faq h2{margin-bottom:32px}
+.faq-list{display:flex;flex-direction:column;gap:12px}
+details{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px}
+summary{font-weight:700;font-size:17px;cursor:pointer}
+details p{margin-top:12px;font-size:16px;line-height:1.6;color:var(--muted)}
+
+.cta{padding:0 24px 96px}
+.cta .wrap{background:var(--accent);color:#fff;border-radius:28px;padding:64px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.cta h2{font-size:clamp(30px,4vw,46px);max-width:720px}
+.cta p{font-size:18px;color:var(--pink)}
+.cta a.ig{color:#fff;font-weight:500}
+
+footer{border-top:1px solid var(--line);padding:32px 24px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;font-size:14px;color:#5E5559}
+
+/* Botão flutuante do WhatsApp */
+.wa-float{position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:999px;background:#1F8F4E;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:50}
+.wa-float:hover{color:#fff;background:#187A42}
+
+@media (max-width:640px){
+  nav .link{display:none}
+  .hero{padding-top:24px;gap:40px}
+  section.block{padding:72px 20px}
+  .cta .wrap{padding:48px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     CONFIGURAÇÃO: troque o número do WhatsApp aqui embaixo.
+     Formato: 55 + DDD + número, só dígitos. Ex.: 5511987654321
+     ========================================================= -->
+<script>
+  var WHATSAPP = "5531982598701";
+</script>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#topo" aria-label="FotoGrude, voltar ao topo">
+      <span class="logo-mark"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+      <span>FotoGrude</span>
+    </a>
+    <nav>
+      <a class="link" href="#como-funciona">Como funciona</a>
+      <a class="link" href="#pacotes">Pacotes</a>
+      <a class="link" href="#duvidas">Dúvidas</a>
+      <a class="icon-btn" href="https://www.instagram.com/fotogrude99/" target="_blank" rel="noopener" aria-label="Instagram da FotoGrude">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5"/></svg>
+      </a>
+      <a class="btn btn-dark" data-wa="Olá! Quero fazer um pedido de ímãs personalizados.">Fazer pedido</a>
+    </nav>
+  </div>
+</header>
+
+<main id="topo">
+  <section class="wrap hero">
+    <div class="hero-text">
+      <span class="tag">Ímãs personalizados com as suas fotos</span>
+      <h1>Suas memórias favoritas, na porta da geladeira.</h1>
+      <p class="lead">Você manda as fotos, a gente transforma em ímãs bonitos e resistentes. Presente perfeito para quem você ama — ou para deixar a sua cozinha com a cara da sua família.</p>
+      <div class="row">
+        <a class="btn btn-accent" data-wa="Olá! Quero fazer um pedido de ímãs personalizados.">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          Pedir pelo WhatsApp
+        </a>
+        <a class="btn" href="#pacotes">Ver pacotes</a>
+      </div>
+      <div class="perks">
+        <span>✓ Envio para todo o Brasil</span>
+        <span>✓ Pagamento via Pix ou cartão</span>
+        <span>✓ Feito à mão com carinho</span>
+      </div>
+    </div>
+
+    <!-- Para usar fotos reais: coloque as imagens na pasta "fotos" (foto1.jpg ... foto9.jpg).
+         Enquanto não existirem, aparecem quadradinhos coloridos. -->
+    <div class="hero-art">
+      <div class="board" id="board" aria-label="Exemplos de ímãs na geladeira" role="img"></div>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="block dark">
+    <div class="wrap">
+      <div class="head">
+        <h2>Como funciona</h2>
+        <p>Simples assim, em 3 passos.</p>
+      </div>
+      <div class="grid">
+        <div class="step"><span class="num">1</span><h3>Escolha o pacote</h3><p>Veja as opções abaixo e escolha quantos ímãs você quer.</p></div>
+        <div class="step"><span class="num">2</span><h3>Envie suas fotos</h3><p>Mande as fotos pelo WhatsApp depois do pagamento. Pode ser foto do celular!</p></div>
+        <div class="step"><span class="num">3</span><h3>Receba em casa</h3><p>Produzimos com cuidado e enviamos bem embalado até você.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pacotes" class="block">
+    <div class="wrap">
+      <div class="head">
+        <h2>Escolha seu pacote</h2>
+        <p>Ímãs no tamanho [TAMANHO, ex.: 5x5 cm]. Você pode misturar quantas fotos quiser.</p>      </div>
+      <div class="grid plans">
+        <div class="plan">
+          <h3>Ímã Avulso</h3>
+          <p class="qty">1 ímã</p>
+          <p class="price">R$ 7,90</p>
+          <p class="unit">Compre quantos quiser</p>
+          <p class="desc">Para presentear alguém com aquela foto especial ou completar o seu kit.</p>
+          <a class="btn" data-wa="Olá! Quero ímã avulso (R$ 7,90 cada).">Quero avulso</a>
+        </div>
+        <div class="plan">
+          <h3>Kit Mini</h3>
+          <p class="qty">6 ímãs</p>
+          <p class="price">R$ 39,00</p>
+          <p class="unit">R$ 6,50 cada ímã</p>
+          <p class="desc">Ideal para lembrancinha ou para experimentar.</p>
+          <a class="btn" data-wa="Olá! Quero o Kit Mini (6 ímãs).">Quero este</a>
+        </div>
+        <div class="plan">
+          <h3>Kit Família</h3>
+          <p class="qty">9 ímãs</p>
+          <p class="price">R$ 55,80</p>
+          <p class="unit">R$ 6,20 cada ímã</p>
+          <p class="desc">O favorito: monta um quadrado perfeito na geladeira.</p>
+          <a class="btn" data-wa="Olá! Quero o Kit Família (9 ímãs).">Quero este</a>
+        </div>
+        <div class="plan featured">
+          <div class="plan-top"><h3>Kit Memórias</h3><span class="badge">Mais vendido</span></div>
+          <p class="qty">12 ímãs</p>
+          <p class="price">R$ 72,00</p>
+          <p class="unit">R$ 6,00 cada ímã · melhor preço</p>
+          <p class="desc">Para quem tem muitas fotos especiais e não consegue escolher.</p>
+          <a class="btn" data-wa="Olá! Quero o Kit Memórias (12 ímãs).">Quero este</a>
+        </div>
+        <div class="plan">
+          <h3>Kit Festa</h3>
+          <p class="qty">20+ ímãs</p>
+          <p class="price">Sob consulta</p>
+          <p class="desc">Lembrancinhas de aniversário, casamento, chá de bebê e eventos.</p>
+          <a class="btn" data-wa="Olá! Quero um orçamento do Kit Festa (20+ ímãs).">Pedir orçamento</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gifts">
+    <div class="wrap">
+      <h2>Perfeito para presentear</h2>
+      <div class="gift-grid">
+        <div class="gift"><h3>Dia das Mães</h3><p>As fotos dos filhos e netos sempre à vista.</p></div>
+        <div class="gift"><h3>Dia dos Namorados</h3><p>A história do casal, foto por foto.</p></div>
+        <div class="gift"><h3>Natal e aniversários</h3><p>Um presente pessoal que cabe em qualquer bolso.</p></div>
+        <div class="gift"><h3>Lembrancinhas</h3><p>Os convidados levam a festa para casa.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="duvidas" class="block faq">
+    <div class="wrap">
+      <h2>Dúvidas frequentes</h2>
+      <div class="faq-list">
+        <details><summary>Que tipo de foto eu posso mandar?</summary><p>Fotos do celular funcionam muito bem. Evite prints e fotos muito escuras ou tremidas. Se alguma não ficar boa, avisamos antes de imprimir.</p></details>
+        <details><summary>Posso comprar só um ímã?</summary><p>Pode! O ímã avulso sai por R$ 7,90 cada. Nos kits o valor por ímã fica mais em conta: R$ 6,50 (6 ímãs), R$ 6,20 (9 ímãs) e R$ 6,00 (12 ímãs).</p></details>
+        <details><summary>Posso misturar fotos diferentes no mesmo kit?</summary><p>Pode! Cada ímã pode ter uma foto diferente.</p></details>
+        <details><summary>Quanto tempo demora?</summary><p>A produção leva [X] dias úteis após o envio das fotos, mais o prazo de entrega da sua região.</p></details>
+        <details><summary>Como faço o pagamento?</summary><p>Aceitamos Pix e cartão. É só chamar no WhatsApp que enviamos os dados.</p></details>
+        <details><summary>Vocês entregam na minha cidade?</summary><p>Enviamos para todo o Brasil. O frete é calculado pelo seu CEP.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <h2>Bora colocar suas memórias na geladeira?</h2>
+      <p>Chama a gente no WhatsApp e faça seu pedido em poucos minutos.</p>
+      <a class="btn" style="border-color:#fff" data-wa="Olá! Quero fazer um pedido de ímãs personalizados.">Fazer meu pedido</a>
+      <a class="ig" href="https://www.instagram.com/fotogrude99/" target="_blank" rel="noopener">Veja mais trabalhos no Instagram @fotogrude99</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="ano">2026</span> FotoGrude · Ímãs personalizados</span>
+    <span>Instagram: <a href="https://www.instagram.com/fotogrude99/" target="_blank" rel="noopener">@fotogrude99</a> · WhatsApp: <a data-wa="Olá!" id="wa-footer">(31) 98259-8701</a></span>
+  </div>
+</footer>
+
+<a class="wa-float" data-wa="Olá! Quero fazer um pedido de ímãs personalizados." aria-label="Falar no WhatsApp">
+  <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
+</a>
+
+<script>
+  // Links do WhatsApp com mensagem pronta para cada botão
+  document.querySelectorAll('[data-wa]').forEach(function (el) {
+    el.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(el.getAttribute('data-wa'));
+    el.target = '_blank';
+    el.rel = 'noopener';
+  });
+
+  document.getElementById('ano').textContent = new Date().getFullYear();
+
+  // Mural de ímãs: usa fotos/foto1.jpg ... foto9.jpg se existirem, senão cores
+  var cores = ['#E07A9B','#7FA7C9','#F2B544','#8CC0A8','#C98BB9','#E9926B','#6E9BD1','#B7C96B','#E07A9B'];
+  var giros = [-4,3,-2,2,-3,4,-1,3,-4];
+  var board = document.getElementById('board');
+  cores.forEach(function (cor, i) {
+    var p = document.createElement('div');
+    p.className = 'polaroid';
+    p.style.transform = 'rotate(' + giros[i] + 'deg)';
+    var img = document.createElement('div');
+    img.style.backgroundColor = cor;
+    var teste = new Image();
+    teste.onload = function () { img.style.backgroundImage = 'url(fotos/foto' + (i + 1) + '.jpg)'; };
+    teste.src = 'fotos/foto' + (i + 1) + '.jpg';
+    p.appendChild(img);
+    board.appendChild(p);
+  });
+</script>
+</body>
+</html>
