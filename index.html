@@ -10,6 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://fotogrude.buytoday99.com/fotos/exemplo-ima.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23A21F52'/%3E%3Cpath d='M17.6 7.2a3.3 3.3 0 0 0-4.7 0l-.9.9-.9-.9a3.3 3.3 0 0 0-4.7 4.7l.9.9 4.7 4.5 4.7-4.5.9-.9a3.3 3.3 0 0 0 0-4.7z' fill='none' stroke='white' stroke-width='1.6'/%3E%3C/svg%3E">
+<script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -65,11 +66,61 @@ nav a.link:hover{color:var(--accent)}
 .row{display:flex;flex-wrap:wrap;gap:12px}
 .perks{display:flex;flex-wrap:wrap;gap:20px;font-size:15px;color:var(--muted)}
 .perks span{display:inline-flex;align-items:center;gap:6px}
-.hero-art{flex:1 1 400px;min-width:0;display:flex;justify-content:center}
-.showcase{margin:0;width:100%;max-width:460px;position:relative}
-.showcase img{display:block;width:100%;height:auto;border-radius:28px;box-shadow:0 18px 40px rgba(31,26,28,.18);transform:rotate(-2deg)}
-.showcase figcaption{position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:14px;font-weight:700;box-shadow:0 6px 16px rgba(31,26,28,.12);display:flex;align-items:center;gap:8px}
-.showcase .dot{width:8px;height:8px;border-radius:999px;background:var(--accent)}
+.hero-art{flex:1 1 400px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:22px}
+
+/* Geladeira com ímãs reais */
+.fridge{position:relative;width:100%;max-width:460px;aspect-ratio:4/5;border-radius:32px;background:linear-gradient(160deg,#F4F7F8 0%,#E3E9EC 55%,#D6DEE2 100%);border:1px solid #CBD5DA;box-shadow:inset 0 2px 0 #fff,0 24px 50px rgba(31,26,28,.14)}
+.fridge::before{content:"";position:absolute;left:-7px;top:22%;width:10px;height:26%;border-radius:8px;background:linear-gradient(90deg,#BFC9CE,#E9EEF0);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.mag{position:absolute;left:var(--l);top:var(--t);width:var(--w);padding:6px 6px 14px;border:0;border-radius:6px;background:#fff;box-shadow:0 10px 22px rgba(31,26,28,.22);transform:rotate(var(--r));cursor:zoom-in;transition:transform .25s ease,box-shadow .25s ease;z-index:var(--z,1);font:inherit}
+.mag img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:3px}
+.mag:hover,.mag:focus-visible{transform:rotate(0deg) scale(1.06);box-shadow:0 18px 34px rgba(31,26,28,.3);z-index:5}
+.mag:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.mag::after{content:"";position:absolute;left:50%;top:-6px;width:14px;height:14px;margin-left:-7px;border-radius:999px;background:radial-gradient(circle at 35% 35%,#FF8FB5,var(--accent) 60%,#6B1236);box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.js .mag{animation:grudar .7s cubic-bezier(.2,1.4,.4,1) backwards;animation-delay:var(--d)}
+@keyframes grudar{from{opacity:0;transform:translateY(-40px) rotate(calc(var(--r) * 3)) scale(1.15)}to{opacity:1;transform:rotate(var(--r))}}
+.fridge-hint{display:inline-flex;align-items:center;gap:8px;text-align:center;line-height:1.35;background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px 16px;font-size:14px;font-weight:700;box-shadow:0 6px 16px rgba(31,26,28,.08)}
+.fridge-hint .dot{width:8px;height:8px;border-radius:999px;background:var(--accent);animation:pulso 1.6s ease-in-out infinite}
+@keyframes pulso{50%{transform:scale(1.6);opacity:.5}}
+
+/* Ampliar foto */
+.lightbox{border:0;padding:0;background:transparent;max-width:min(92vw,620px);width:100%;overflow:visible}
+.lightbox::backdrop{background:rgba(20,15,17,.82)}
+.lightbox figure{margin:0;background:#fff;border-radius:22px;padding:14px;box-shadow:0 30px 60px rgba(0,0,0,.4)}
+.lightbox img{display:block;width:100%;height:auto;max-height:72vh;object-fit:contain;border-radius:12px}
+.lightbox figcaption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 4px 2px;font-weight:700}
+.lb-nav{display:flex;gap:8px}
+.lb-btn{width:44px;height:44px;border-radius:999px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.lb-close{position:absolute;top:-16px;right:-12px;background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* Simulador */
+.sim{background:linear-gradient(180deg,#FFF 0%,var(--bg) 100%);padding:96px 24px}
+.sim .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:56px}
+.sim-text{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.sim-text h2{font-size:clamp(32px,4vw,48px)}
+.sim-text p{font-size:18px;line-height:1.6;color:var(--muted)}
+.kicker{align-self:flex-start;background:var(--gold);color:var(--ink);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.sim-controls{display:flex;flex-direction:column;gap:14px}
+.file-btn{position:relative;overflow:hidden;cursor:pointer}
+.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.zoom{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:700}
+.zoom input{flex:1;accent-color:var(--accent);min-height:44px}
+.privacy{display:flex;gap:8px;align-items:flex-start;font-size:14px !important;color:var(--muted)}
+.sim-stage{flex:1 1 380px;min-width:0;display:flex;justify-content:center}
+.sim-fridge{width:100%;max-width:440px;aspect-ratio:1/1;border-radius:32px;background:linear-gradient(160deg,#F4F7F8,#DCE3E7);border:1px solid #CBD5DA;display:flex;align-items:center;justify-content:center;position:relative}
+.sim-mag{width:62%;aspect-ratio:1/1;border-radius:14%;background-color:var(--pink);background-repeat:no-repeat;background-position:50% 50%;background-size:cover;box-shadow:0 2px 0 #fff inset,0 22px 40px rgba(31,26,28,.28),0 0 0 3px rgba(255,255,255,.5);position:relative;touch-action:none;cursor:grab;transform:rotate(-3deg);transition:transform .3s}
+.sim-mag:active{cursor:grabbing}
+.sim-mag::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,0) 70%,rgba(255,255,255,.18) 100%);pointer-events:none}
+.sim-size{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;white-space:nowrap}
+.sim-tip{position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);white-space:nowrap}
+
+/* Aparecer ao rolar */
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .js .mag,.fridge-hint .dot{animation:none}
+  .js .reveal{opacity:1;transform:none;transition:none}
+  .mag,.sim-mag{transition:none}
+}
 
 /* Seções */
 section.block{padding:96px 24px}
@@ -162,6 +213,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
       <span>FotoGrude</span>
     </a>
     <nav>
+      <a class="link" href="#simulador">Teste sua foto</a>
       <a class="link" href="#como-funciona">Como funciona</a>
       <a class="link" href="#pacotes">Pacotes</a>
       <a class="link" href="#duvidas">Dúvidas</a>
@@ -189,10 +241,14 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
     </div>
 
     <div class="hero-art">
-      <figure class="showcase">
-        <img src="fotos/exemplo-ima.jpg" width="900" height="900" alt="Ímã quadrado de 5x5 cm feito pela FotoGrude com a foto de um casal se beijando" fetchpriority="high">
-        <figcaption><span class="dot" aria-hidden="true"></span>Ímã real feito pela FotoGrude · 5x5 cm</figcaption>
-      </figure>
+      <div class="fridge" id="fridge" aria-label="Ímãs reais feitos pela FotoGrude. Toque em um para ampliar.">
+        <button type="button" class="mag" style="--l:5%;--t:3%;--w:42%;--r:-6deg;--d:.15s" data-legenda="Casal apaixonado"><img src="fotos/exemplo-ima.jpg" width="900" height="900" alt="Ímã com a foto de um casal se beijando" fetchpriority="high"></button>
+        <button type="button" class="mag" style="--l:53%;--t:5%;--w:42%;--r:5deg;--d:.3s" data-legenda="O pet da família"><img src="fotos/ima-gato.jpg" width="800" height="800" alt="Ímã com a foto de um gato preto bocejando"></button>
+        <button type="button" class="mag" style="--l:28%;--t:33%;--w:44%;--r:-2deg;--d:.45s;--z:3" data-legenda="Do tamanho da sua mão: 5x5 cm"><img src="fotos/ima-maos.jpg" width="800" height="800" alt="Mão segurando um ímã com a foto de um grupo de mulheres"></button>
+        <button type="button" class="mag" style="--l:4%;--t:64%;--w:42%;--r:4deg;--d:.6s" data-legenda="Gerações reunidas"><img src="fotos/ima-familia.jpg" width="800" height="800" alt="Ímã com a foto de cinco mulheres da família, de várias idades" loading="lazy"></button>
+        <button type="button" class="mag" style="--l:54%;--t:63%;--w:42%;--r:-4deg;--d:.75s" data-legenda="Amigas de estrada"><img src="fotos/ima-amigas.jpg" width="800" height="800" alt="Ímã com a foto de cinco amigas com camisetas de motoclube" loading="lazy"></button>
+      </div>
+      <p class="fridge-hint"><span class="dot" aria-hidden="true"></span>Ímãs reais feitos pela FotoGrude · toque para ampliar</p>
     </div>
   </section>
 
@@ -215,6 +271,33 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         <span><strong>Feito à mão</strong>Conferimos cada foto antes de imprimir</span>
       </li>
     </ul>
+  </section>
+
+  <section class="sim" id="simulador" aria-labelledby="sim-titulo">
+    <div class="wrap">
+      <div class="sim-text reveal">
+        <span class="kicker">Experimente agora</span>
+        <h2 id="sim-titulo">Veja sua foto virar ímã</h2>
+        <p>Escolha uma foto do seu celular e veja na hora como ela fica num ímã de 5x5 cm. Arraste para ajustar e use o zoom para enquadrar.</p>
+        <div class="sim-controls">
+          <label class="btn btn-accent file-btn">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span id="sim-btn-txt">Escolher minha foto</span>
+            <input type="file" id="sim-file" accept="image/*" aria-label="Escolher uma foto para ver como ímã">
+          </label>
+          <label class="zoom" for="sim-zoom">Zoom <input type="range" id="sim-zoom" min="100" max="300" value="100"></label>
+          <a class="btn" href="pedido.html?kit=avulso" id="sim-pedir">Gostei! Quero meu ímã</a>
+          <p class="privacy"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Sua foto não é enviada a lugar nenhum: a prévia acontece só aqui, na sua tela.</p>
+        </div>
+      </div>
+      <div class="sim-stage reveal">
+        <div class="sim-fridge">
+          <span class="sim-tip">Arraste a foto para ajustar</span>
+          <div class="sim-mag" id="sim-mag" role="img" aria-label="Prévia da sua foto como ímã"></div>
+          <span class="sim-size">5 x 5 cm</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="como-funciona" class="block dark">
@@ -327,6 +410,20 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
   </div>
 </footer>
 
+<dialog class="lightbox" id="lightbox" aria-label="Foto ampliada">
+  <figure>
+    <img id="lb-img" src="" alt="">
+    <figcaption>
+      <span id="lb-txt"></span>
+      <span class="lb-nav">
+        <button type="button" class="lb-btn" id="lb-prev" aria-label="Foto anterior">‹</button>
+        <button type="button" class="lb-btn" id="lb-next" aria-label="Próxima foto">›</button>
+      </span>
+    </figcaption>
+  </figure>
+  <button type="button" class="lb-btn lb-close" id="lb-close" aria-label="Fechar">×</button>
+</dialog>
+
 <a class="wa-float" data-wa="Olá! Quero fazer um pedido de ímãs personalizados." aria-label="Falar no WhatsApp">
   <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
 </a>
@@ -340,6 +437,90 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
   });
 
   document.getElementById('ano').textContent = new Date().getFullYear();
+
+  // Ampliar os ímãs da geladeira
+  (function () {
+    var mags = Array.prototype.slice.call(document.querySelectorAll('.mag'));
+    var lb = document.getElementById('lightbox');
+    if (!lb || !lb.showModal) return;
+    var img = document.getElementById('lb-img'), txt = document.getElementById('lb-txt'), atual = 0;
+    function mostrar(i) {
+      atual = (i + mags.length) % mags.length;
+      var foto = mags[atual].querySelector('img');
+      img.src = foto.src; img.alt = foto.alt;
+      txt.textContent = mags[atual].getAttribute('data-legenda');
+    }
+    mags.forEach(function (m, i) { m.addEventListener('click', function () { mostrar(i); lb.showModal(); }); });
+    document.getElementById('lb-prev').addEventListener('click', function () { mostrar(atual - 1); });
+    document.getElementById('lb-next').addEventListener('click', function () { mostrar(atual + 1); });
+    document.getElementById('lb-close').addEventListener('click', function () { lb.close(); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+    lb.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') mostrar(atual - 1);
+      if (e.key === 'ArrowRight') mostrar(atual + 1);
+    });
+  })();
+
+  // Simulador: sua foto como ímã (a foto fica só no aparelho)
+  (function () {
+    var mag = document.getElementById('sim-mag');
+    var file = document.getElementById('sim-file');
+    var zoom = document.getElementById('sim-zoom');
+    if (!mag) return;
+    var px = 50, py = 50, url = 'fotos/exemplo-ima.jpg', proporcao = 1;
+    function desenhar() {
+      var z = zoom.value + '%';
+      mag.style.backgroundImage = 'url("' + url + '")';
+      // "cover" com zoom: o lado menor da foto ocupa o ímã inteiro
+      mag.style.backgroundSize = proporcao >= 1 ? 'auto ' + z : z + ' auto';
+      mag.style.backgroundPosition = px + '% ' + py + '%';
+    }
+    function medir() {
+      var im = new Image();
+      im.onload = function () { proporcao = im.naturalWidth / im.naturalHeight; desenhar(); };
+      im.src = url;
+    }
+    file.addEventListener('change', function () {
+      var f = file.files && file.files[0];
+      if (!f || !/^image\//.test(f.type)) return;
+      if (url.indexOf('blob:') === 0) URL.revokeObjectURL(url);
+      url = URL.createObjectURL(f);
+      px = 50; py = 50; zoom.value = 100;
+      document.getElementById('sim-btn-txt').textContent = 'Trocar foto';
+      mag.style.transform = 'rotate(0deg) scale(1.04)';
+      setTimeout(function () { mag.style.transform = ''; }, 300);
+      medir();
+      var r = mag.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) mag.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    zoom.addEventListener('input', desenhar);
+    var arrastando = false, ox, oy, sx, sy;
+    mag.addEventListener('pointerdown', function (e) { arrastando = true; ox = e.clientX; oy = e.clientY; sx = px; sy = py; mag.setPointerCapture(e.pointerId); });
+    mag.addEventListener('pointermove', function (e) {
+      if (!arrastando) return;
+      var w = mag.clientWidth || 1;
+      px = Math.max(0, Math.min(100, sx - (e.clientX - ox) / w * 100));
+      py = Math.max(0, Math.min(100, sy - (e.clientY - oy) / w * 100));
+      desenhar();
+    });
+    ['pointerup', 'pointercancel'].forEach(function (t) { mag.addEventListener(t, function () { arrastando = false; }); });
+    desenhar();
+    medir();
+  })();
+
+  // Seções aparecem suavemente ao rolar
+  (function () {
+    document.querySelectorAll('.head, .step, .plan, .gift, .slogan, .faq-list, .cta .wrap').forEach(function (el, i) {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i % 5) * 0.08 + 's';
+    });
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.15 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
 </script>
 </body>
 </html>
