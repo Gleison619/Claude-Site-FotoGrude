@@ -8,6 +8,7 @@
 <meta property="og:title" content="FotoGrude · Ímãs personalizados">
 <meta property="og:description" content="Suas memórias favoritas, na porta da geladeira.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://fotogrude.buytoday99.com/fotos/exemplo-ima.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23A21F52'/%3E%3Cpath d='M17.6 7.2a3.3 3.3 0 0 0-4.7 0l-.9.9-.9-.9a3.3 3.3 0 0 0-4.7 4.7l.9.9 4.7 4.5 4.7-4.5.9-.9a3.3 3.3 0 0 0 0-4.7z' fill='none' stroke='white' stroke-width='1.6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,9 +66,10 @@ nav a.link:hover{color:var(--accent)}
 .perks{display:flex;flex-wrap:wrap;gap:20px;font-size:15px;color:var(--muted)}
 .perks span{display:inline-flex;align-items:center;gap:6px}
 .hero-art{flex:1 1 400px;min-width:0;display:flex;justify-content:center}
-.board{width:100%;max-width:440px;aspect-ratio:4/5;background:#E9EEF0;border-radius:28px;border:1px solid #D5DDE0;padding:36px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-content:center}
-.polaroid{background:#fff;padding:7px 7px 20px;border-radius:4px;box-shadow:0 6px 14px rgba(31,26,28,.14)}
-.polaroid div{aspect-ratio:1/1;border-radius:2px;background-size:cover;background-position:center}
+.showcase{margin:0;width:100%;max-width:460px;position:relative}
+.showcase img{display:block;width:100%;height:auto;border-radius:28px;box-shadow:0 18px 40px rgba(31,26,28,.18);transform:rotate(-2deg)}
+.showcase figcaption{position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:14px;font-weight:700;box-shadow:0 6px 16px rgba(31,26,28,.12);display:flex;align-items:center;gap:8px}
+.showcase .dot{width:8px;height:8px;border-radius:999px;background:var(--accent)}
 
 /* Seções */
 section.block{padding:96px 24px}
@@ -186,10 +188,11 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
       </div>
     </div>
 
-    <!-- Para usar fotos reais: coloque as imagens na pasta "fotos" (foto1.jpg ... foto9.jpg).
-         Enquanto não existirem, aparecem quadradinhos coloridos. -->
     <div class="hero-art">
-      <div class="board" id="board" aria-label="Exemplos de ímãs na geladeira" role="img"></div>
+      <figure class="showcase">
+        <img src="fotos/exemplo-ima.jpg" width="900" height="900" alt="Ímã quadrado de 5x5 cm feito pela FotoGrude com a foto de um casal se beijando" fetchpriority="high">
+        <figcaption><span class="dot" aria-hidden="true"></span>Ímã real feito pela FotoGrude · 5x5 cm</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -337,23 +340,6 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
   });
 
   document.getElementById('ano').textContent = new Date().getFullYear();
-
-  // Mural de ímãs: usa fotos/foto1.jpg ... foto9.jpg se existirem, senão cores
-  var cores = ['#E07A9B','#7FA7C9','#F2B544','#8CC0A8','#C98BB9','#E9926B','#6E9BD1','#B7C96B','#E07A9B'];
-  var giros = [-4,3,-2,2,-3,4,-1,3,-4];
-  var board = document.getElementById('board');
-  cores.forEach(function (cor, i) {
-    var p = document.createElement('div');
-    p.className = 'polaroid';
-    p.style.transform = 'rotate(' + giros[i] + 'deg)';
-    var img = document.createElement('div');
-    img.style.backgroundColor = cor;
-    var teste = new Image();
-    teste.onload = function () { img.style.backgroundImage = 'url(fotos/foto' + (i + 1) + '.jpg)'; };
-    teste.src = 'fotos/foto' + (i + 1) + '.jpg';
-    p.appendChild(img);
-    board.appendChild(p);
-  });
 </script>
 </body>
 </html>
