@@ -253,7 +253,15 @@ main{padding:40px 0 96px}
     var copiar = document.getElementById('copiar');
     copiar.addEventListener('click', function () {
       var ok = function () { copiar.textContent = 'Copiado!'; copiar.classList.add('ok'); setTimeout(function () { copiar.textContent = 'Copiar'; copiar.classList.remove('ok'); }, 2500); };
-      if (navigator.clipboard) navigator.clipboard.writeText(LOJA.pixChave).then(ok, function () {});
+      var reserva = function () {
+        var t = document.createElement('textarea');
+        t.value = LOJA.pixChave; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select();
+        try { if (document.execCommand('copy')) ok(); } catch (e) {}
+        document.body.removeChild(t);
+      };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(LOJA.pixChave).then(ok, reserva);
+      else reserva();
     });
   }
 
