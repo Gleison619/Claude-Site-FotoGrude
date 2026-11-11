@@ -9,7 +9,7 @@ var LOJA = {
 
   // Pix
   pixChave: "7be4968e-5d7f-49c7-9a2a-01c2f83b7179",  // chave aleatória
-  pixNome: "",         // nome que aparece no app do banco ao pagar
+  pixNome: "Gleison Felix",  // nome que aparece no app do banco ao pagar
 
   // Link do Mercado Pago de VALOR LIVRE (o cliente digita o total).
   // Serve para todos os kits e qualquer quantidade. Se preenchido, é usado
