@@ -31,6 +31,20 @@ h1,h2,h3,p{margin:0}
 .btn-dark{background:var(--ink);color:#fff;font-size:15px;padding:12px 18px}
 .btn-dark:hover{color:#fff;background:#000}
 
+/* Barra de aviso */
+.announce{background:var(--ink);text-align:center;padding:10px 16px;font-size:14px}
+.announce a{color:#fff;text-decoration:none}
+.announce a:hover{color:var(--gold)}
+.announce strong{color:var(--gold)}
+
+/* Faixa de confiança */
+.trust{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 24px}
+.trust ul{list-style:none;margin:0 auto;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.trust li{display:flex;align-items:center;gap:14px;color:var(--accent)}
+.trust svg{flex:none}
+.trust span{display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--muted)}
+.trust strong{font-size:16px;color:var(--ink)}
+
 /* Header */
 header .wrap{padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
@@ -75,6 +89,8 @@ section.block{padding:96px 24px}
 .plan .price{font-size:22px;font-weight:700;color:var(--accent)}
 .plan .unit{font-size:15px;font-weight:500;color:var(--muted);margin-top:-10px}
 .plan.featured .unit{color:var(--pink)}
+.plan .save{align-self:flex-start;background:#DDF3E6;color:#14633A;font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px;margin-top:-6px}
+.plan.featured .save{background:#fff;color:#14633A}
 .grid.plans{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 .grid.plans .plan{padding:26px 22px}
 .grid.plans .qty{font-size:38px}
@@ -135,6 +151,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
   var WHATSAPP = "5531982598701";
 </script>
 
+<div class="announce">
+  <a href="#pacotes">Kits a partir de <strong>R$ 6,00 por ímã</strong> · Envio para todo o Brasil</a>
+</div>
+
 <header>
   <div class="wrap">
     <a class="logo" href="#topo" aria-label="FotoGrude, voltar ao topo">
@@ -166,11 +186,6 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         </a>
         <a class="btn" href="#pacotes">Ver pacotes</a>
       </div>
-      <div class="perks">
-        <span>✓ Envio para todo o Brasil</span>
-        <span>✓ Pagamento via Pix ou cartão</span>
-        <span>✓ Feito à mão com carinho</span>
-      </div>
     </div>
 
     <!-- Para usar fotos reais: coloque as imagens na pasta "fotos" (foto1.jpg ... foto9.jpg).
@@ -178,6 +193,27 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
     <div class="hero-art">
       <div class="board" id="board" aria-label="Exemplos de ímãs na geladeira" role="img"></div>
     </div>
+  </section>
+
+  <section class="trust" aria-label="Nossas garantias">
+    <ul class="wrap">
+      <li>
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <span><strong>Envio para todo o Brasil</strong>Frete calculado pelo CEP</span>
+      </li>
+      <li>
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        <span><strong>Pix ou cartão</strong>Pague do jeito que preferir</span>
+      </li>
+      <li>
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
+        <span><strong>Atendimento no WhatsApp</strong>Tire dúvidas antes de comprar</span>
+      </li>
+      <li>
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span><strong>Feito à mão</strong>Conferimos cada foto antes de imprimir</span>
+      </li>
+    </ul>
   </section>
 
   <section id="como-funciona" class="block dark">
@@ -198,7 +234,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
     <div class="wrap">
       <div class="head">
         <h2>Escolha seu pacote</h2>
-        <p>Ímãs no tamanho [TAMANHO, ex.: 5x5 cm]. Você pode misturar quantas fotos quiser.</p>      </div>
+        <p>Ímãs no tamanho [TAMANHO, ex.: 5x5 cm]. Você pode misturar quantas fotos quiser. Quanto maior o kit, menor o preço por ímã. A economia é em relação ao ímã avulso (R$ 7,90).</p>      </div>
       <div class="grid plans">
         <div class="plan">
           <h3>Ímã Avulso</h3>
@@ -213,6 +249,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="qty">6 ímãs</p>
           <p class="price">R$ 39,00</p>
           <p class="unit">R$ 6,50 cada ímã</p>
+          <p class="save">Economize R$ 8,40 (17%)</p>
           <p class="desc">Ideal para lembrancinha ou para experimentar.</p>
           <a class="btn" data-wa="Olá! Quero o Kit Mini (6 ímãs).">Quero este</a>
         </div>
@@ -221,6 +258,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="qty">9 ímãs</p>
           <p class="price">R$ 55,80</p>
           <p class="unit">R$ 6,20 cada ímã</p>
+          <p class="save">Economize R$ 15,30 (21%)</p>
           <p class="desc">O favorito: monta um quadrado perfeito na geladeira.</p>
           <a class="btn" data-wa="Olá! Quero o Kit Família (9 ímãs).">Quero este</a>
         </div>
@@ -229,6 +267,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="qty">12 ímãs</p>
           <p class="price">R$ 72,00</p>
           <p class="unit">R$ 6,00 cada ímã · melhor preço</p>
+          <p class="save">Economize R$ 22,80 (24%)</p>
           <p class="desc">Para quem tem muitas fotos especiais e não consegue escolher.</p>
           <a class="btn" data-wa="Olá! Quero o Kit Memórias (12 ímãs).">Quero este</a>
         </div>
