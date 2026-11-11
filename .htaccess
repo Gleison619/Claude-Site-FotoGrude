@@ -1,0 +1,7 @@
+# Páginas e configuração da loja sempre conferidas no servidor,
+# para preços, Pix e links novos aparecerem na hora para todos.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
