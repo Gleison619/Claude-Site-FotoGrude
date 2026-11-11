@@ -27,6 +27,7 @@ h1,h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacin
 .btn-green:hover{background:#187A42;color:#fff}
 .btn-block{width:100%}
 .pay .btn + .btn{margin-top:-2px}
+.valor-livre{background:#FFF6DC;border:1px solid #F0D58A;color:var(--ink) !important;border-radius:12px;padding:10px 12px;font-size:14px !important}
 
 header{border-bottom:1px solid var(--line);background:#fff}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:16px}
@@ -166,6 +167,7 @@ main{padding:40px 0 96px}
                 <p id="cartao-texto">Escolha onde pagar, em ambiente seguro.</p>
                 <a class="btn btn-accent btn-block" id="cartao-btn" target="_blank" rel="noopener">Pagar com cartão</a>
                 <a class="btn btn-block" id="cartao-btn2" target="_blank" rel="noopener" hidden>Pagar com InfinitePay</a>
+                <p class="valor-livre" id="valor-livre" hidden></p>
               </div>
             </div>
             <p class="hint" style="margin-top:16px">O frete é calculado pelo seu CEP e informado no WhatsApp.</p>
@@ -294,7 +296,9 @@ main{padding:40px 0 96px}
     var texto = document.getElementById('cartao-texto');
     var podeLink = !kit.escolheQtd || qtd === 1;
     var opcoes = [];
+    var valorLivre = false;
     if (podeLink && linkMercadoPago) opcoes.push({ nome: 'Mercado Pago', url: linkMercadoPago });
+    else if (LOJA.mercadoPagoValorLivre) { opcoes.push({ nome: 'Mercado Pago', url: LOJA.mercadoPagoValorLivre }); valorLivre = true; }
     if (podeLink && linkInfinitePay) opcoes.push({ nome: 'InfinitePay', url: linkInfinitePay });
 
     btn2.hidden = true;
@@ -310,6 +314,9 @@ main{padding:40px 0 96px}
       btn.textContent = 'Pedir link do cartão';
       texto.textContent = 'Enviamos um link seguro de pagamento pelo WhatsApp.';
     }
+    var aviso = document.getElementById('valor-livre');
+    aviso.hidden = !valorLivre;
+    if (valorLivre) aviso.innerHTML = 'No Mercado Pago, digite o valor <strong>' + formatarReais(total()) + '</strong>.';
 
     document.getElementById('pix-wa').href = linkWhatsApp('Olá! Quero pagar no Pix: ' + textoPedido() + '. Pode me passar a chave?');
     document.getElementById('pix-wa').target = '_blank';

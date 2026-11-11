@@ -8,10 +8,15 @@ var LOJA = {
   whatsapp: "5531982598701",
 
   // Pix
-  pixChave: "",        // ex.: "fotogrude@email.com", CPF, CNPJ, telefone ou chave aleatória
+  pixChave: "7be4968e-5d7f-49c7-9a2a-01c2f83b7179",  // chave aleatória
   pixNome: "",         // nome que aparece no app do banco ao pagar
 
-  // Links de pagamento do Mercado Pago (cartão), um por opção
+  // Link do Mercado Pago de VALOR LIVRE (o cliente digita o total).
+  // Serve para todos os kits e qualquer quantidade. Se preenchido, é usado
+  // quando não houver um link específico do kit abaixo.
+  mercadoPagoValorLivre: "https://link.mercadopago.com.br/fotogrudebuytoday99",
+
+  // Links de pagamento do Mercado Pago com valor fixo, um por opção (opcional)
   linksCartao: {
     avulso: "",        // link de 1 ímã (R$ 7,90). Para mais de 1 avulso, o cliente pede o link no WhatsApp
     mini: "",          // Kit Mini, R$ 39,00
