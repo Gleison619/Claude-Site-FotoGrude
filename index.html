@@ -143,12 +143,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
 </head>
 <body>
 
-<!-- =========================================================
-     CONFIGURAÇÃO: troque o número do WhatsApp aqui embaixo.
-     Formato: 55 + DDD + número, só dígitos. Ex.: 5511987654321
-     ========================================================= -->
+<!-- Configuração (WhatsApp, Pix e links de pagamento) fica no arquivo config.js -->
+<script src="config.js"></script>
 <script>
-  var WHATSAPP = "5531982598701";
+  var WHATSAPP = LOJA.whatsapp;
 </script>
 
 <div class="announce">
@@ -242,7 +240,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="price">R$ 7,90</p>
           <p class="unit">Compre quantos quiser</p>
           <p class="desc">Para presentear alguém com aquela foto especial ou completar o seu kit.</p>
-          <a class="btn" data-wa="Olá! Quero ímã avulso (R$ 7,90 cada).">Quero avulso</a>
+          <a class="btn" href="pedido.html?kit=avulso">Quero avulso</a>
         </div>
         <div class="plan">
           <h3>Kit Mini</h3>
@@ -251,7 +249,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="unit">R$ 6,50 cada ímã</p>
           <p class="save">Economize R$ 8,40 (17%)</p>
           <p class="desc">Ideal para lembrancinha ou para experimentar.</p>
-          <a class="btn" data-wa="Olá! Quero o Kit Mini (6 ímãs).">Quero este</a>
+          <a class="btn" href="pedido.html?kit=mini">Quero este</a>
         </div>
         <div class="plan">
           <h3>Kit Família</h3>
@@ -260,7 +258,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="unit">R$ 6,20 cada ímã</p>
           <p class="save">Economize R$ 15,30 (21%)</p>
           <p class="desc">O favorito: monta um quadrado perfeito na geladeira.</p>
-          <a class="btn" data-wa="Olá! Quero o Kit Família (9 ímãs).">Quero este</a>
+          <a class="btn" href="pedido.html?kit=familia">Quero este</a>
         </div>
         <div class="plan featured">
           <div class="plan-top"><h3>Kit Memórias</h3><span class="badge">Mais vendido</span></div>
@@ -269,14 +267,14 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="unit">R$ 6,00 cada ímã · melhor preço</p>
           <p class="save">Economize R$ 22,80 (24%)</p>
           <p class="desc">Para quem tem muitas fotos especiais e não consegue escolher.</p>
-          <a class="btn" data-wa="Olá! Quero o Kit Memórias (12 ímãs).">Quero este</a>
+          <a class="btn" href="pedido.html?kit=memorias">Quero este</a>
         </div>
         <div class="plan">
           <h3>Kit Festa</h3>
           <p class="qty">20+ ímãs</p>
           <p class="price">Sob consulta</p>
           <p class="desc">Lembrancinhas de aniversário, casamento, chá de bebê e eventos.</p>
-          <a class="btn" data-wa="Olá! Quero um orçamento do Kit Festa (20+ ímãs).">Pedir orçamento</a>
+          <a class="btn" href="pedido.html?kit=festa">Pedir orçamento</a>
         </div>
       </div>
     </div>
