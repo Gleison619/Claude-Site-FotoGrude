@@ -17,6 +17,14 @@ var LOJA = {
     mini: "",          // Kit Mini, R$ 39,00
     familia: "",       // Kit Família, R$ 55,80
     memorias: ""       // Kit Memórias, R$ 72,00
+  },
+
+  // Links de pagamento do InfinitePay (cartão), um por opção
+  linksInfinitePay: {
+    avulso: "",        // link de 1 ímã (R$ 7,90)
+    mini: "",          // Kit Mini, R$ 39,00
+    familia: "",       // Kit Família, R$ 55,80
+    memorias: ""       // Kit Memórias, R$ 72,00
   }
 };
 

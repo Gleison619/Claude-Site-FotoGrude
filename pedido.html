@@ -26,6 +26,7 @@ h1,h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacin
 .btn-green{background:var(--green);border-color:var(--green);color:#fff}
 .btn-green:hover{background:#187A42;color:#fff}
 .btn-block{width:100%}
+.pay .btn + .btn{margin-top:-2px}
 
 header{border-bottom:1px solid var(--line);background:#fff}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:16px}
@@ -162,8 +163,9 @@ main{padding:40px 0 96px}
                   <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
                   Cartão de crédito
                 </h3>
-                <p id="cartao-texto">Pagamento pelo Mercado Pago, em ambiente seguro.</p>
+                <p id="cartao-texto">Escolha onde pagar, em ambiente seguro.</p>
                 <a class="btn btn-accent btn-block" id="cartao-btn" target="_blank" rel="noopener">Pagar com cartão</a>
+                <a class="btn btn-block" id="cartao-btn2" target="_blank" rel="noopener" hidden>Pagar com InfinitePay</a>
               </div>
             </div>
             <p class="hint" style="margin-top:16px">O frete é calculado pelo seu CEP e informado no WhatsApp.</p>
@@ -242,7 +244,8 @@ main{padding:40px 0 96px}
   document.title = 'Pedido ' + kit.nome + ' · FotoGrude';
 
   var qtd = kit.qtd;
-  var linkCartao = LOJA.linksCartao[chave] || '';
+  var linkMercadoPago = (LOJA.linksCartao || {})[chave] || '';
+  var linkInfinitePay = (LOJA.linksInfinitePay || {})[chave] || '';
 
   // Pix
   if (LOJA.pixChave) {
@@ -285,19 +288,27 @@ main{padding:40px 0 96px}
       el.hidden = false;
     }
 
-    // Cartão: link do Mercado Pago quando existe (avulso só com 1 ímã); senão, pedir link no WhatsApp
+    // Cartão: links do Mercado Pago e/ou InfinitePay quando existem (avulso só com 1 ímã); senão, pedir link no WhatsApp
     var btn = document.getElementById('cartao-btn');
-    var usaLink = linkCartao && (!kit.escolheQtd || qtd === 1);
-    if (usaLink) {
-      btn.href = linkCartao;
-      btn.textContent = 'Pagar com cartão';
-      btn.target = '_blank';
-      document.getElementById('cartao-texto').textContent = 'Pagamento pelo Mercado Pago, em ambiente seguro.';
+    var btn2 = document.getElementById('cartao-btn2');
+    var texto = document.getElementById('cartao-texto');
+    var podeLink = !kit.escolheQtd || qtd === 1;
+    var opcoes = [];
+    if (podeLink && linkMercadoPago) opcoes.push({ nome: 'Mercado Pago', url: linkMercadoPago });
+    if (podeLink && linkInfinitePay) opcoes.push({ nome: 'InfinitePay', url: linkInfinitePay });
+
+    btn2.hidden = true;
+    if (opcoes.length === 2) {
+      btn.href = opcoes[0].url; btn.textContent = 'Pagar com ' + opcoes[0].nome;
+      btn2.href = opcoes[1].url; btn2.textContent = 'Pagar com ' + opcoes[1].nome; btn2.hidden = false;
+      texto.textContent = 'Escolha onde pagar, em ambiente seguro.';
+    } else if (opcoes.length === 1) {
+      btn.href = opcoes[0].url; btn.textContent = 'Pagar com cartão';
+      texto.textContent = 'Pagamento pelo ' + opcoes[0].nome + ', em ambiente seguro.';
     } else {
       btn.href = linkWhatsApp('Olá! Quero pagar no cartão: ' + textoPedido() + '. Pode me mandar o link de pagamento?');
       btn.textContent = 'Pedir link do cartão';
-      btn.target = '_blank';
-      document.getElementById('cartao-texto').textContent = 'Enviamos um link seguro do Mercado Pago pelo WhatsApp.';
+      texto.textContent = 'Enviamos um link seguro de pagamento pelo WhatsApp.';
     }
 
     document.getElementById('pix-wa').href = linkWhatsApp('Olá! Quero pagar no Pix: ' + textoPedido() + '. Pode me passar a chave?');
