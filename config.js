@@ -33,6 +33,13 @@ var LOJA = {
   }
 };
 
+/* Avaliações de clientes (só aparecem no site quando houver pelo menos uma).
+   Use apenas depoimentos reais, com autorização do cliente. Formato:
+   { nome: "Ana", cidade: "Belo Horizonte", texto: "Ficaram lindos!", estrelas: 5, foto: "fotos/cliente-ana.jpg" }
+   "cidade" e "foto" são opcionais. */
+var AVALIACOES = [
+];
+
 /* Opções de venda (preços em centavos) */
 var KITS = {
   avulso:   { nome: "Ímã Avulso",   qtd: 1,  preco: 790,  porIma: 790, escolheQtd: true },
