@@ -33,6 +33,47 @@ var LOJA = {
   }
 };
 
+/* Promoção / aviso com contagem regressiva (faixa no topo do site).
+   Para desligar: ativa: false. Depois do "ate", a faixa some sozinha. */
+var PROMO = {
+  ativa: true,
+  texto: "Natal: peça até 10/12 para receber antes do Natal",
+  ate: "2026-12-10T23:59:59-03:00",
+  link: "#pacotes"
+};
+
+/* Frete por região (em centavos). Enquanto algum valor for null,
+   a calculadora de frete NÃO aparece e o frete segue pelo WhatsApp.
+   Ex.: sudeste: 1500 = R$ 15,00. "prazo" é opcional (texto). */
+var FRETE = {
+  mg:          { nome: "Minas Gerais",  valor: null, prazo: "" },
+  sudeste:     { nome: "Sudeste",       valor: null, prazo: "" },
+  sul:         { nome: "Sul",           valor: null, prazo: "" },
+  centroOeste: { nome: "Centro-Oeste",  valor: null, prazo: "" },
+  nordeste:    { nome: "Nordeste",      valor: null, prazo: "" },
+  norte:       { nome: "Norte",         valor: null, prazo: "" }
+};
+
+/* Descobre a região pelo CEP (8 dígitos). Retorna a chave de FRETE ou null. */
+function regiaoPorCep(cep) {
+  var d = String(cep || "").replace(/\D/g, "");
+  if (d.length !== 8) return null;
+  var p2 = parseInt(d.slice(0, 2), 10), p3 = parseInt(d.slice(0, 3), 10);
+  if (p2 >= 30 && p2 <= 39) return "mg";
+  if (p2 <= 29) return "sudeste";                       // SP, RJ, ES
+  if (p2 >= 40 && p2 <= 65) return "nordeste";          // BA, SE, PE, AL, PB, RN, CE, PI, MA
+  if (p2 >= 66 && p2 <= 69) return "norte";             // PA, AP, AM, RR, AC
+  if (p3 >= 768 && p3 <= 769) return "norte";           // RO
+  if (p2 === 77) return "norte";                        // TO
+  if (p2 >= 70 && p2 <= 79) return "centroOeste";       // DF, GO, MT, MS
+  if (p2 >= 80) return "sul";                           // PR, SC, RS
+  return null;
+}
+function freteAtivo() {
+  for (var k in FRETE) { if (FRETE[k].valor === null || FRETE[k].valor === undefined) return false; }
+  return true;
+}
+
 /* Avaliações de clientes (só aparecem no site quando houver pelo menos uma).
    Use apenas depoimentos reais, com autorização do cliente. Formato:
    { nome: "Ana", cidade: "Belo Horizonte", texto: "Ficaram lindos!", estrelas: 5, foto: "fotos/cliente-ana.jpg" }

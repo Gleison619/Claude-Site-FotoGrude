@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="config.js?v=3"></script>
+<script src="config.js?v=4"></script>
 <style>
 :root{--accent:#A21F52;--accent-dark:#7A1640;--ink:#1F1A1C;--muted:#4A4246;--bg:#FBFAF7;--pink:#FCE3EC;--line:#E6E0DD;--gold:#F5C04A;--green:#1F8F4E}
 *{box-sizing:border-box}
@@ -69,6 +69,14 @@ main{padding:40px 0 96px}
 .lines{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:16px;font-size:15px}
 .line{display:flex;justify-content:space-between;gap:12px}
 .line span:first-child{color:var(--muted)}
+.cep-box{display:flex;flex-direction:column;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px}
+.cep-box label{font-weight:700;font-size:14px}
+.cep-row{display:flex;gap:8px}
+.cep-row input{flex:1;min-width:0;min-height:44px;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font:inherit;font-size:16px}
+.cep-row input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+.cep-row button{min-height:44px;padding:8px 14px;border:0;border-radius:12px;background:var(--ink);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.cep-msg{font-size:13px;color:var(--muted)}
+.cep-msg.erro{color:#B42318}
 .total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:16px}
 .total strong{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;color:var(--accent)}
 .save{align-self:flex-start;background:#DDF3E6;color:#14633A;font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px}
@@ -202,7 +210,15 @@ main{padding:40px 0 96px}
           <div class="lines">
             <div class="line"><span>Tamanho</span><span>5x5 cm</span></div>
             <div class="line"><span>Produção</span><span>3 dias úteis</span></div>
-            <div class="line"><span>Frete</span><span>Pelo CEP</span></div>
+            <div class="line"><span>Frete</span><span id="frete-valor">Pelo CEP</span></div>
+          </div>
+          <div class="cep-box" id="cep-box" hidden>
+            <label for="cep">Calcule o frete</label>
+            <div class="cep-row">
+              <input id="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-describedby="cep-msg">
+              <button type="button" id="cep-ok">Calcular</button>
+            </div>
+            <p class="cep-msg" id="cep-msg" aria-live="polite"></p>
           </div>
           <div class="total"><span>Total</span><strong class="js-total"></strong></div>
           <a class="change" href="index.html#pacotes">Trocar de pacote</a>
@@ -270,10 +286,35 @@ main{padding:40px 0 96px}
     });
   }
 
-  function textoPedido() {
-    return kit.nome + ' (' + qtd + (qtd === 1 ? ' ímã' : ' ímãs') + ' 5x5 cm) - total ' + formatarReais(total());
+  // Frete por CEP (só aparece quando todos os valores de FRETE estão preenchidos no config.js)
+  var frete = null, freteCep = '', freteRegiao = '';
+  var usaFrete = typeof freteAtivo === 'function' && freteAtivo();
+  if (usaFrete) {
+    document.getElementById('cep-box').hidden = false;
+    var campo = document.getElementById('cep'), msg = document.getElementById('cep-msg');
+    campo.addEventListener('input', function () {
+      var d = campo.value.replace(/\D/g, '').slice(0, 8);
+      campo.value = d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d;
+    });
+    function calcular() {
+      var r = regiaoPorCep(campo.value);
+      msg.classList.remove('erro');
+      if (!r) { msg.textContent = 'Digite um CEP com 8 números.'; msg.classList.add('erro'); frete = null; atualizar(); return; }
+      frete = FRETE[r].valor; freteRegiao = FRETE[r].nome; freteCep = campo.value;
+      msg.textContent = 'Envio para ' + freteRegiao + (FRETE[r].prazo ? ' · prazo: ' + FRETE[r].prazo : '') + '. Valor estimado; confirmamos no WhatsApp.';
+      atualizar();
+    }
+    document.getElementById('cep-ok').addEventListener('click', calcular);
+    campo.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); calcular(); } });
   }
-  function total() { return kit.escolheQtd ? kit.preco * qtd : kit.preco; }
+
+  function textoPedido() {
+    var t = kit.nome + ' (' + qtd + (qtd === 1 ? ' ímã' : ' ímãs') + ' 5x5 cm)';
+    if (frete !== null) t += ' + frete ' + formatarReais(frete) + ' (' + freteRegiao + ', CEP ' + freteCep + ')';
+    return t + ' - total ' + formatarReais(total());
+  }
+  function produtos() { return kit.escolheQtd ? kit.preco * qtd : kit.preco; }
+  function total() { return produtos() + (frete || 0); }
 
   function atualizar() {
     var t = formatarReais(total());
@@ -282,6 +323,7 @@ main{padding:40px 0 96px}
     document.getElementById('kit-nome').textContent = kit.nome;
     document.getElementById('kit-sub').textContent = (kit.escolheQtd ? formatarReais(kit.porIma) + ' cada ímã' : qtd + ' ímãs · ' + formatarReais(kit.porIma) + ' cada');
     document.getElementById('qtd').textContent = qtd;
+    document.getElementById('frete-valor').textContent = frete !== null ? formatarReais(frete) + ' · ' + freteRegiao : 'Pelo CEP';
 
     if (!kit.escolheQtd) {
       var economia = 790 * qtd - kit.preco;
@@ -321,7 +363,7 @@ main{padding:40px 0 96px}
     document.getElementById('pix-wa').href = linkWhatsApp('Olá! Quero pagar no Pix: ' + textoPedido() + '. Pode me passar a chave?');
     document.getElementById('pix-wa').target = '_blank';
     var enviar = document.getElementById('enviar-wa');
-    enviar.href = linkWhatsApp('Olá! Fiz o pedido: ' + textoPedido() + '. Segue o comprovante, as fotos e o meu CEP.');
+    enviar.href = linkWhatsApp('Olá! Fiz o pedido: ' + textoPedido() + '. Segue o comprovante, as fotos' + (frete !== null ? ' e o meu endereço.' : ' e o meu CEP.'));
     enviar.target = '_blank';
   }
 
