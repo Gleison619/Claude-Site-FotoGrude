@@ -44,7 +44,8 @@ select{min-height:44px}
 .editor[hidden]{display:none}
 .editor h2{font-size:15px;margin:0}
 .editor .linha{display:flex;gap:8px;flex-wrap:wrap}
-.editor .linha .btn{flex:1;min-height:40px;font-size:14px;padding:8px 12px}
+.editor .linha{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.editor .linha .btn{min-height:44px;font-size:14px;padding:8px 12px}
 .zoom{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700}
 .zoom input{flex:1;accent-color:var(--accent);min-height:36px}
 
@@ -60,6 +61,11 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 .cell.sel{outline:2.5px solid var(--accent);outline-offset:1px;z-index:2}
 .cell.tem-foto{cursor:grab;background:#fff}
 .zoom output{min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+/* Quadro grande de ajuste (arrastar com um dedo, zoom com dois) */
+.preview{position:relative;width:min(240px,62vw);aspect-ratio:1/1;margin:2px auto 0;overflow:hidden;background:#fff;border:1px solid #9AA4AA;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.preview:active{cursor:grabbing}
+.preview img{position:absolute;max-width:none;pointer-events:none;-webkit-user-drag:none}
+.prev-final{position:absolute;border:2px dashed #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 0 0 999px rgba(31,26,28,.28);pointer-events:none}
 .cell.tem-foto:active{cursor:grabbing}
 .guia-corte{position:absolute;inset:0;border:0.25mm solid #9AA4AA;pointer-events:none;z-index:1}
 .guia-final{position:absolute;border:0.25mm dashed rgba(255,255,255,.95);box-shadow:0 0 0 0.2mm rgba(0,0,0,.35);pointer-events:none;z-index:1}
@@ -71,7 +77,9 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 @media (max-width:860px){
   .app{grid-template-columns:1fr}
   aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
-  main{padding:16px 16px 220px;align-items:center}
+  main{padding:16px 16px 520px;align-items:center}
+  .editor{max-height:78vh;overflow-y:auto}
+  .preview{width:min(220px,58vw)}
   /* Painel da foto selecionada fica preso embaixo da tela */
   .editor{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:#fff;z-index:30;box-shadow:0 -6px 30px rgba(31,26,28,.25);max-width:520px;margin:0 auto}
   .editor .fechar.fechar{display:inline-flex}
@@ -145,8 +153,12 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 
     <div class="editor" id="editor" hidden>
       <div class="editor-topo"><h2 id="editor-titulo">Foto selecionada</h2><button type="button" class="fechar" id="fechar-editor" aria-label="Fechar ajuste da foto">×</button></div>
+      <div class="preview" id="preview" aria-label="Quadro de ajuste: arraste para enquadrar, use dois dedos para zoom">
+        <img id="prev-img" alt="">
+        <span class="prev-final" id="prev-final" aria-hidden="true"></span>
+      </div>
       <label class="zoom" for="zoom">Zoom <input type="range" id="zoom" min="20" max="400" value="100"><output id="zoom-valor">100%</output></label>
-      <p class="dica">Arraste a foto para qualquer lado. Com zoom abaixo de 100% a foto inteira cabe e o espaço que sobrar sai em branco. A parte fora da linha tracejada dobra para trás.</p>
+      <p class="dica">Arraste a foto no quadro acima (ou direto na folha) para qualquer lado. Com dois dedos, afaste ou aproxime para dar zoom. Abaixo de 100% a foto inteira cabe e o espaço que sobrar sai em branco. A parte fora da linha tracejada dobra para trás.</p>
       <div class="linha">
         <button type="button" class="btn" id="centralizar">Centralizar</button>
         <label class="btn btn-file">Trocar<input type="file" id="trocar" accept="image/*" aria-label="Trocar a foto selecionada"></label>
@@ -288,7 +300,8 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       // no toque, o primeiro toque só seleciona; arrastar vale para a foto já selecionada
       if (e.pointerType !== 'mouse' && sel !== idx) return;
       ini = { x: e.clientX, y: e.clientY, dx: fotos[idx].dx, dy: fotos[idx].dy };
-      moveu = false; cell.setPointerCapture(e.pointerId);
+      moveu = false;
+      try { cell.setPointerCapture(e.pointerId); } catch (err) {}
     });
     cell.addEventListener('pointermove', function (e) {
       if (!ini) return;
@@ -298,6 +311,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       // a foto acompanha o dedo/mouse livremente, para qualquer lado
       f.dx = ini.dx + dx; f.dy = ini.dy + dy; limitar(f);
       aplicarCaixa(cell.querySelector('img'), f);
+      if (idx === sel) atualizarPreview();
     });
     cell.addEventListener('pointerup', function () {
       var era = ini; ini = null;
@@ -326,6 +340,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     $('editor-titulo').textContent = 'Ímã ' + (sel + 1);
     $('zoom').value = Math.round(f.zoom * 100);
     $('zoom-valor').textContent = Math.round(f.zoom * 100) + '%';
+    atualizarPreview();
   }
 
   function carregar(file) {
@@ -361,17 +376,11 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
   });
   $('zoom').addEventListener('input', function () {
     var f = fotos[sel]; if (!f) return;
-    f.zoom = this.value / 100; limitar(f);
-    $('zoom-valor').textContent = this.value + '%';
-    var c = document.querySelector('.cell[data-i="' + sel + '"] img');
-    if (c) aplicarCaixa(c, f);
+    f.zoom = this.value / 100; mudou(f);
   });
   $('centralizar').addEventListener('click', function () {
     var f = fotos[sel]; if (!f) return;
-    f.zoom = 1; f.dx = 0; f.dy = 0;
-    $('zoom').value = 100; $('zoom-valor').textContent = '100%';
-    var c = document.querySelector('.cell[data-i="' + sel + '"] img');
-    if (c) aplicarCaixa(c, f);
+    f.zoom = 1; f.dx = 0; f.dy = 0; mudou(f);
   });
   $('remover').addEventListener('click', function () {
     if (!fotos[sel]) return;
@@ -467,6 +476,70 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       x.arcTo(X, Y + S, X, Y, r); x.arcTo(X, Y, X + S, Y, r); x.closePath();
     }
   });
+
+  // Quadro grande de ajuste: mostra o ímã selecionado ampliado; 1 dedo arrasta, 2 dedos dão zoom
+  function atualizarPreview() {
+    var f = fotos[sel]; if (!f) return;
+    var c = cfg(), im = $('prev-img'), fin = $('prev-final');
+    if (im.getAttribute('src') !== f.url) im.src = f.url;
+    aplicarCaixa(im, f);
+    var d = (c.corte - c.final) / 2 / c.corte * 100;
+    fin.style.left = fin.style.top = d + '%';
+    fin.style.width = fin.style.height = (c.final / c.corte * 100) + '%';
+    fin.style.borderRadius = c.raio ? (c.raio / c.final * 100) + '%' : '0';
+    fin.style.display = c.corte > c.final ? '' : 'none';
+    $('preview').style.borderRadius = c.raio ? Math.min(c.raio + (c.corte - c.final) / 2, c.corte / 2) / c.corte * 100 + '%' : '0';
+  }
+  function mudou(f) {
+    limitar(f);
+    var ci = document.querySelector('.cell[data-i="' + sel + '"] img');
+    if (ci) aplicarCaixa(ci, f);
+    $('zoom').value = Math.round(f.zoom * 100);
+    $('zoom-valor').textContent = Math.round(f.zoom * 100) + '%';
+    atualizarPreview();
+  }
+  (function () {
+    var pv = $('preview'), toques = {}, ini = null;
+    function lista() { return Object.keys(toques).map(function (k) { return toques[k]; }); }
+    function comecar() {
+      var f = fotos[sel]; if (!f) { ini = null; return; }
+      var p = lista();
+      ini = { dx: f.dx, dy: f.dy, zoom: f.zoom, pts: p.map(function (t) { return { x: t.x, y: t.y }; }) };
+      if (p.length >= 2) ini.dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1;
+    }
+    pv.addEventListener('pointerdown', function (e) {
+      if (!fotos[sel]) return;
+      e.preventDefault();
+      toques[e.pointerId] = { x: e.clientX, y: e.clientY };
+      comecar();
+      try { pv.setPointerCapture(e.pointerId); } catch (err) { /* alguns aparelhos recusam; segue sem prender */ }
+    });
+    pv.addEventListener('pointermove', function (e) {
+      if (!toques[e.pointerId] || !ini) return;
+      toques[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var f = fotos[sel], lado = pv.getBoundingClientRect().width || 1, p = lista();
+      if (p.length >= 2 && ini.dist) {
+        var dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+        f.zoom = Math.max(0.2, Math.min(4, ini.zoom * dist / ini.dist));
+        var mx = (p[0].x + p[1].x) / 2 - (ini.pts[0].x + ini.pts[1].x) / 2, my = (p[0].y + p[1].y) / 2 - (ini.pts[0].y + ini.pts[1].y) / 2;
+        f.dx = ini.dx + mx / lado * 100; f.dy = ini.dy + my / lado * 100;
+      } else {
+        f.dx = ini.dx + (p[0].x - ini.pts[0].x) / lado * 100;
+        f.dy = ini.dy + (p[0].y - ini.pts[0].y) / lado * 100;
+      }
+      mudou(f);
+    });
+    function soltar(e) { delete toques[e.pointerId]; comecar(); }
+    pv.addEventListener('pointerup', soltar);
+    pv.addEventListener('pointercancel', soltar);
+    // roda do mouse também dá zoom no quadro
+    pv.addEventListener('wheel', function (e) {
+      var f = fotos[sel]; if (!f) return;
+      e.preventDefault();
+      f.zoom = Math.max(0.2, Math.min(4, f.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08)));
+      mudou(f);
+    }, { passive: false });
+  })();
 
   $('fechar-editor').addEventListener('click', function () { sel = -1; marcar(); editor(); });
   if (window.matchMedia && matchMedia('(pointer:fine)').matches) document.documentElement.classList.add('mouse');
