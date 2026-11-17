@@ -74,6 +74,8 @@
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--accent)} a:hover{color:var(--accent-dark)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.dark :focus-visible,.cta :focus-visible,.announce :focus-visible{outline-color:var(--gold)}
 h1,h2,.display{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-0.02em}
 h1,h2,h3,p{margin:0}
 .wrap{max-width:1180px;margin:0 auto}
@@ -157,6 +159,13 @@ header nav{display:flex;flex-wrap:wrap;align-items:center;gap:14px;font-size:15p
 .mag::after{content:"";position:absolute;left:50%;top:-6px;width:14px;height:14px;margin-left:-7px;border-radius:999px;background:radial-gradient(circle at 35% 35%,#FF8FB5,var(--accent) 60%,#6B1236);box-shadow:0 2px 4px rgba(0,0,0,.3)}
 .js .mag{animation:grudar .7s cubic-bezier(.2,1.4,.4,1) backwards;animation-delay:var(--d)}
 @keyframes grudar{from{opacity:0;transform:translateY(-40px) rotate(calc(var(--r) * 3)) scale(1.15)}to{opacity:1;transform:rotate(var(--r))}}
+/* Arrastar os ímãs (mouse): o ímã "descola", segue o cursor e gruda de novo com um tranco */
+.js .mag.pronto{animation:none}
+@media (hover:hover) and (pointer:fine){.mag{cursor:grab;touch-action:none}}
+.mag.drag{cursor:grabbing;transition:none;transform:rotate(0deg) scale(1.08);box-shadow:0 30px 50px rgba(31,26,28,.35);z-index:20}
+.mag.drag::after{transform:translateY(-3px)}
+.js .mag.pronto.solta{animation:encaixe .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes encaixe{0%{transform:rotate(0deg) scale(1.08)}45%{transform:rotate(var(--r)) scale(.96)}100%{transform:rotate(var(--r)) scale(1)}}
 .fridge-hint{display:inline-flex;align-items:center;gap:8px;text-align:center;line-height:1.35;background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px 16px;font-size:14px;font-weight:700;box-shadow:0 6px 16px rgba(31,26,28,.08)}
 .fridge-hint .dot{width:8px;height:8px;border-radius:999px;background:var(--accent);animation:pulso 1.6s ease-in-out infinite}
 @keyframes pulso{50%{transform:scale(1.6);opacity:.5}}
@@ -177,7 +186,7 @@ header nav{display:flex;flex-wrap:wrap;align-items:center;gap:14px;font-size:15p
 .sim-text{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:18px}
 .sim-text h2{font-size:clamp(32px,4vw,48px)}
 .sim-text p{font-size:18px;line-height:1.6;color:var(--muted)}
-.kicker{align-self:flex-start;background:var(--gold);color:var(--ink);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.kicker{align-self:flex-start;background:var(--gold);color:var(--ink);font-weight:700;font-size:14px;padding:6px 14px;border-radius:999px}
 .sim-controls{display:flex;flex-direction:column;gap:14px}
 .file-btn{position:relative;overflow:hidden;cursor:pointer}
 .file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
@@ -243,10 +252,19 @@ section.block{padding:96px 24px}
 .plan.featured .unit{color:var(--pink)}
 .plan .save{align-self:flex-start;background:#DDF3E6;color:#14633A;font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px;margin-top:-6px}
 .plan.featured .save{background:#fff;color:#14633A}
-.grid.plans{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid.plans{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+/* Telas largas: 3 kits grandes em cima; avulso e festa em faixas horizontais embaixo */
+@media (min-width:900px){
+  .grid.plans{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .grid.plans .plan{grid-column:span 2}
+  .grid.plans .plan.side{grid-column:span 3;order:2;display:grid;grid-template-columns:132px minmax(0,1fr);column-gap:22px;row-gap:6px;align-content:center}
+  .plan.side > *{grid-column:2}
+  .plan.side .mini{grid-column:1;grid-row:1 / span 7;height:132px;align-self:center}
+  .plan.side .btn{justify-self:start;margin-top:6px}
+  .plan.side .desc{flex-grow:0}
+}
 .grid.plans .plan{padding:26px 22px}
 .grid.plans .qty{font-size:38px}
-.plan-top{flex-wrap:wrap}
 .plan .desc{font-size:15px;line-height:1.6;color:var(--muted);flex-grow:1}
 .plan .btn{font-size:16px}
 .plan.featured{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -254,7 +272,7 @@ section.block{padding:96px 24px}
 .plan.featured .desc{color:var(--pink)}
 .plan.featured .btn{border-color:#fff}
 .badge{background:var(--gold);color:var(--ink);font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px}
-.plan-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.plan-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
 
 .gifts{background:var(--pink);padding:88px 24px}
 .gifts h2{margin-bottom:16px}
@@ -299,8 +317,76 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
 .wa-float{position:fixed;right:20px;bottom:20px;width:60px;height:60px;border-radius:999px;background:#1F8F4E;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:50}
 .wa-float:hover{color:#fff;background:#187A42}
 
+/* Mural: faixa de metal com os ímãs reais passando devagar */
+.mural{position:relative;overflow:hidden;padding:46px 0 54px;background:
+  repeating-linear-gradient(90deg,rgba(255,255,255,.0) 0 3px,rgba(255,255,255,.35) 3px 4px),
+  linear-gradient(180deg,#DCE3E7 0%,#C9D2D7 48%,#D8DFE3 100%);
+  border-top:1px solid #BCC6CB;border-bottom:1px solid #BCC6CB}
+@media (min-width:1200px){.mural{margin-right:-212px}}
+.mural-track{display:flex;width:max-content;animation:desliza 60s linear infinite}
+.mural:hover .mural-track,.mural:focus-within .mural-track{animation-play-state:paused}
+.mural-list{display:flex;gap:34px;margin:0;padding:0 17px;list-style:none}
+@keyframes desliza{to{transform:translateX(-50%)}}
+.mural figure{margin:0;width:190px;background:#fff;padding:8px 8px 12px;border-radius:6px;box-shadow:0 14px 26px rgba(31,26,28,.22);transform:rotate(var(--r));position:relative}
+.mural figure::before{content:"";position:absolute;left:50%;top:-7px;width:16px;height:16px;margin-left:-8px;border-radius:999px;background:radial-gradient(circle at 35% 35%,#FFE39A,var(--gold) 55%,#A9781A);box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.mural img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:3px}
+.mural figcaption{margin-top:8px;font-size:13px;font-weight:700;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){
+  .mural{overflow-x:auto}
+  .mural-track{animation:none}
+  .mural-list[aria-hidden]{display:none}
+}
+
+/* Como funciona: trilha com os 3 passos ligados por uma linha */
+.trilha{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;position:relative}
+.trilha::before{content:"";position:absolute;left:12%;right:12%;top:31px;border-top:3px dashed rgba(245,192,74,.55);transform-origin:left;transform:scaleX(var(--prog,1));transition:transform 1.4s cubic-bezier(.6,0,.2,1)}
+.js .trilha:not(.in){--prog:0}
+.trilha .step{position:relative;padding-top:24px;background:none;text-align:center;align-items:center}
+.trilha .num{width:64px;height:64px;margin-top:-24px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#FFE7A8,var(--gold) 55%,#B9851D);color:var(--ink);font-size:30px;box-shadow:0 10px 20px rgba(0,0,0,.35),inset 0 -3px 0 rgba(0,0,0,.15);position:relative;z-index:1}
+.trilha .step p{max-width:28ch}
+.js .trilha .num{transform:scale(.6);opacity:0;transition:transform .5s cubic-bezier(.3,1.6,.5,1),opacity .3s}
+.js .trilha.in .num{transform:none;opacity:1}
+.js .trilha.in .step:nth-child(2) .num{transition-delay:.55s}
+.js .trilha.in .step:nth-child(3) .num{transition-delay:1.1s}
+@media (max-width:760px){
+  .trilha{grid-template-columns:1fr;gap:8px}
+  .trilha::before{left:31px;right:auto;top:20px;bottom:20px;border-top:0;border-left:3px dashed rgba(245,192,74,.55);transform-origin:top;transform:scaleY(var(--prog,1))}
+  .trilha .step{flex-direction:row;flex-wrap:wrap;text-align:left;align-items:flex-start;padding:12px 0 12px 84px;min-height:88px}
+  .trilha .num{position:absolute;left:0;top:12px;margin:0}
+  .trilha .step h3{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .trilha::before,.js .trilha .num{transition:none}
+  .js .trilha:not(.in){--prog:1}
+  .js .trilha .num{transform:none;opacity:1}
+}
+
+/* Pacotes: cada kit mostra como fica na geladeira */
+.mini{align-self:stretch;height:118px;border-radius:14px;background:linear-gradient(160deg,#F1F5F6,#DDE4E8);border:1px solid #D2DADE;display:flex;align-items:center;justify-content:center;padding:12px}
+.mini-grid{display:grid;grid-template-columns:repeat(var(--c),20px);gap:5px}
+.mini-grid i{width:20px;height:20px;border-radius:3px;background:#fff center/cover no-repeat;box-shadow:0 2px 4px rgba(31,26,28,.25);border:2px solid #fff;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.mini-grid.um{grid-template-columns:46px}
+.mini-grid.um i{width:46px;height:46px;border-width:3px}
+.plan:not(.side) .mini{height:150px}
+.plan:not(.side) .mini-grid{grid-template-columns:repeat(var(--c),28px);gap:7px}
+.plan:not(.side) .mini-grid i{width:28px;height:28px;border-width:2.5px}
+.mini-grid.festa{grid-template-columns:repeat(var(--c),14px);gap:4px}
+.mini-grid.festa i{width:14px;height:14px;border-width:1.5px}
+.plan:hover .mini-grid i{transform:rotate(var(--r,0deg)) scale(1.08)}
+.plan.featured .mini{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
+@media (prefers-reduced-motion:reduce){.mini-grid i{transition:none}}
+
+/* Ocasiões: cada uma vira um ímã preso na porta */
+.gift{position:relative;transform:rotate(var(--r,0deg));transition:transform .25s ease;box-shadow:0 10px 22px rgba(162,31,82,.12)}
+.gift::before{content:"";position:absolute;left:50%;top:-8px;width:16px;height:16px;margin-left:-8px;border-radius:999px;background:radial-gradient(circle at 35% 35%,#FF8FB5,var(--accent) 60%,#6B1236);box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.gift:nth-child(1){--r:-1.5deg}.gift:nth-child(2){--r:1.2deg}.gift:nth-child(3){--r:-.8deg}.gift:nth-child(4){--r:1.6deg}
+.gift:hover{transform:rotate(0deg) translateY(-4px)}
+@media (prefers-reduced-motion:reduce){.gift{transition:none}}
+
 @media (max-width:640px){
   nav .link{display:none}
+  .mural figure{width:150px}
+  .mural-list{gap:24px}
   .hero{padding-top:24px;gap:40px}
   section.block{padding:72px 20px}
   .cta .wrap{padding:48px 24px}
@@ -371,8 +457,13 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         <button type="button" class="mag" style="--l:4%;--t:64%;--w:42%;--r:4deg;--d:.6s" data-legenda="Gerações reunidas"><img src="fotos/ima-familia.jpg" width="800" height="800" alt="Ímã com a foto de cinco mulheres da família, de várias idades" loading="lazy"></button>
         <button type="button" class="mag" style="--l:54%;--t:63%;--w:42%;--r:-4deg;--d:.75s" data-legenda="Amigas de estrada"><img src="fotos/ima-amigas.jpg" width="800" height="800" alt="Ímã com a foto de cinco amigas com camisetas de motoclube" loading="lazy"></button>
       </div>
-      <p class="fridge-hint"><span class="dot" aria-hidden="true"></span>Ímãs reais feitos pela FotoGrude · toque para ampliar</p>
+      <p class="fridge-hint"><span class="dot" aria-hidden="true"></span><span id="fridge-hint-txt">Ímãs reais feitos pela FotoGrude. Toque num ímã para ampliar.</span></p>
     </div>
+  </section>
+
+  <!-- Mural: os ímãs reais passando numa faixa de metal (montado pelo script a partir dos ímãs da geladeira) -->
+  <section class="mural" id="mural" aria-label="Ímãs reais feitos pela FotoGrude" hidden>
+    <div class="mural-track" id="mural-track"></div>
   </section>
 
   <section class="trust" aria-label="Nossas garantias">
@@ -451,11 +542,11 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         <h2>Como funciona</h2>
         <p>Simples assim, em 3 passos.</p>
       </div>
-      <div class="grid">
-        <div class="step"><span class="num">1</span><h3>Escolha o pacote</h3><p>Veja as opções abaixo e escolha quantos ímãs você quer.</p></div>
-        <div class="step"><span class="num">2</span><h3>Envie suas fotos</h3><p>Mande as fotos pelo WhatsApp depois do pagamento. Pode ser foto do celular!</p></div>
-        <div class="step"><span class="num">3</span><h3>Receba em casa</h3><p>Produzimos com cuidado e enviamos bem embalado até você.</p></div>
-      </div>
+      <ol class="trilha" id="trilha">
+        <li class="step"><span class="num">1</span><h3>Escolha o pacote</h3><p>Veja as opções abaixo e escolha quantos ímãs você quer.</p></li>
+        <li class="step"><span class="num">2</span><h3>Envie suas fotos</h3><p>Mande as fotos pelo WhatsApp depois do pagamento. Pode ser foto do celular!</p></li>
+        <li class="step"><span class="num">3</span><h3>Receba em casa</h3><p>Produzimos em 3 dias úteis e enviamos bem embalado até você.</p></li>
+      </ol>
     </div>
   </section>
 
@@ -463,10 +554,12 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
     <div class="wrap">
       <div class="head">
         <h2>Escolha seu pacote</h2>
-        <p>Ímãs no tamanho 5x5 cm, prontos em 3 dias úteis. Você pode misturar quantas fotos quiser. Quanto maior o kit, menor o preço por ímã. A economia é em relação ao ímã avulso (R$ 7,90).</p>      </div>
+        <p>Cada ímã tem 5x5 cm e cada um pode ter uma foto diferente. Quanto maior o kit, menor o preço por ímã. A economia mostrada é em relação ao ímã avulso (R$ 7,90).</p>
+      </div>
       <div class="grid plans">
-        <div class="plan">
+        <div class="plan side">
           <h3>Ímã Avulso</h3>
+          <div class="mini" aria-hidden="true"><div class="mini-grid um" data-n="1" style="--c:1"></div></div>
           <p class="qty">1 ímã</p>
           <p class="price">R$ 7,90</p>
           <p class="unit">Compre quantos quiser</p>
@@ -475,6 +568,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         </div>
         <div class="plan">
           <h3>Kit Mini</h3>
+          <div class="mini" aria-hidden="true"><div class="mini-grid" data-n="6" style="--c:3"></div></div>
           <p class="qty">6 ímãs</p>
           <p class="price">R$ 39,00</p>
           <p class="unit">R$ 6,50 cada ímã</p>
@@ -484,6 +578,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         </div>
         <div class="plan">
           <h3>Kit Família</h3>
+          <div class="mini" aria-hidden="true"><div class="mini-grid" data-n="9" style="--c:3"></div></div>
           <p class="qty">9 ímãs</p>
           <p class="price">R$ 55,80</p>
           <p class="unit">R$ 6,20 cada ímã</p>
@@ -493,6 +588,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         </div>
         <div class="plan featured">
           <div class="plan-top"><h3>Kit Memórias</h3><span class="badge">Mais vendido</span></div>
+          <div class="mini" aria-hidden="true"><div class="mini-grid" data-n="12" style="--c:4"></div></div>
           <p class="qty">12 ímãs</p>
           <p class="price">R$ 72,00</p>
           <p class="unit">R$ 6,00 cada ímã · melhor preço</p>
@@ -500,8 +596,9 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="desc">Para quem tem muitas fotos especiais e não consegue escolher.</p>
           <a class="btn" href="pedido.html?kit=memorias">Quero este</a>
         </div>
-        <div class="plan">
+        <div class="plan side">
           <h3>Kit Festa</h3>
+          <div class="mini" aria-hidden="true"><div class="mini-grid festa" data-n="20" style="--c:5"></div></div>
           <p class="qty">20+ ímãs</p>
           <p class="price">Sob consulta</p>
           <p class="desc">Lembrancinhas de aniversário, casamento, chá de bebê e eventos.</p>
@@ -572,7 +669,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
 
 <dialog class="lightbox" id="lightbox" aria-label="Foto ampliada">
   <figure>
-    <img id="lb-img" src="" alt="">
+    <img id="lb-img" alt="">
     <figcaption>
       <span id="lb-txt"></span>
       <span class="lb-nav">
@@ -610,7 +707,12 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
       img.src = foto.src; img.alt = foto.alt;
       txt.textContent = mags[atual].getAttribute('data-legenda');
     }
-    mags.forEach(function (m, i) { m.addEventListener('click', function () { mostrar(i); lb.showModal(); }); });
+    mags.forEach(function (m, i) {
+      m.addEventListener('click', function () {
+        if (m.dataset.arrastou) { delete m.dataset.arrastou; return; } // foi um arraste, não um clique
+        mostrar(i); lb.showModal();
+      });
+    });
     document.getElementById('lb-prev').addEventListener('click', function () { mostrar(atual - 1); });
     document.getElementById('lb-next').addEventListener('click', function () { mostrar(atual + 1); });
     document.getElementById('lb-close').addEventListener('click', function () { lb.close(); });
@@ -819,17 +921,109 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
     itens.forEach(function (i) { var s = document.getElementById(i.getAttribute('data-sec')); if (s) io.observe(s); });
   })();
 
-  // Seções aparecem suavemente ao rolar
+  // Geladeira do topo: com mouse, dá para arrastar os ímãs e eles grudam de novo
   (function () {
-    document.querySelectorAll('.head, .step, .plan, .gift, .review, .slogan, .faq-list, .cta .wrap').forEach(function (el, i) {
-      el.classList.add('reveal');
-      el.style.transitionDelay = (i % 5) * 0.08 + 's';
+    var fridge = document.getElementById('fridge');
+    if (!fridge) return;
+    var mags = Array.prototype.slice.call(fridge.querySelectorAll('.mag'));
+    var podeArrastar = window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches;
+    var topo = 10;
+    mags.forEach(function (m) {
+      m.addEventListener('animationend', function (e) {
+        if (e.animationName === 'grudar') m.classList.add('pronto');
+        if (e.animationName === 'encaixe') m.classList.remove('solta');
+      });
     });
-    var els = document.querySelectorAll('.reveal');
+    if (!podeArrastar) return;
+    document.getElementById('fridge-hint-txt').textContent = 'Ímãs reais feitos pela FotoGrude. Arraste para trocar de lugar ou clique para ampliar.';
+    mags.forEach(function (m) {
+      var ini = null, moveu = false;
+      m.addEventListener('pointerdown', function (e) {
+        if (e.button !== 0) return;
+        ini = { x: e.clientX, y: e.clientY, l: m.offsetLeft, t: m.offsetTop };
+        moveu = false;
+        m.setPointerCapture(e.pointerId);
+      });
+      m.addEventListener('pointermove', function (e) {
+        if (!ini) return;
+        var dx = e.clientX - ini.x, dy = e.clientY - ini.y;
+        if (!moveu && Math.abs(dx) + Math.abs(dy) < 6) return;
+        if (!moveu) { moveu = true; m.classList.add('pronto', 'drag'); m.classList.remove('solta'); m.style.setProperty('--z', ++topo); }
+        var fw = fridge.clientWidth, fh = fridge.clientHeight, w = m.offsetWidth, h = m.offsetHeight;
+        var l = Math.max(-w * 0.1, Math.min(fw - w * 0.9, ini.l + dx));
+        var t = Math.max(-h * 0.05, Math.min(fh - h * 0.9, ini.t + dy));
+        m.style.setProperty('--l', (l / fw * 100) + '%');
+        m.style.setProperty('--t', (t / fh * 100) + '%');
+      });
+      function soltar() {
+        if (!ini) return;
+        ini = null;
+        if (!moveu) return;
+        m.dataset.arrastou = '1';
+        m.classList.remove('drag');
+        void m.offsetWidth; // reinicia a animação de encaixe
+        m.classList.add('solta');
+      }
+      m.addEventListener('pointerup', soltar);
+      m.addEventListener('pointercancel', soltar);
+    });
+  })();
+
+  // Mural de ímãs: monta a faixa a partir das fotos da geladeira (duas cópias para o loop não ter emenda)
+  (function () {
+    var mural = document.getElementById('mural'), track = document.getElementById('mural-track');
+    var mags = document.querySelectorAll('#fridge .mag');
+    if (!mural || !mags.length) return;
+    var giros = [-3, 2, -1.5, 3, -2.5, 1.5];
+    function lista(copia) {
+      var ul = document.createElement('ul');
+      ul.className = 'mural-list';
+      if (copia) ul.setAttribute('aria-hidden', 'true');
+      // repete as fotos até a faixa ficar mais larga que telas grandes
+      for (var rep = 0; rep < 2; rep++) {
+        mags.forEach(function (m, i) {
+          var foto = m.querySelector('img');
+          var li = document.createElement('li');
+          var fig = document.createElement('figure');
+          fig.style.setProperty('--r', giros[(i + rep * 3) % giros.length] + 'deg');
+          var img = document.createElement('img');
+          img.src = foto.getAttribute('src'); img.alt = (copia || rep) ? '' : foto.alt;
+          img.loading = 'lazy'; img.decoding = 'async'; img.width = 190; img.height = 190;
+          var cap = document.createElement('figcaption');
+          cap.textContent = m.getAttribute('data-legenda');
+          fig.appendChild(img); fig.appendChild(cap); li.appendChild(fig); ul.appendChild(li);
+        });
+      }
+      return ul;
+    }
+    track.appendChild(lista(false));
+    track.appendChild(lista(true));
+    mural.hidden = false;
+  })();
+
+  // Pacotes: mini geladeira com a quantidade de ímãs de cada kit, usando as fotos reais
+  (function () {
+    var fotos = Array.prototype.map.call(document.querySelectorAll('#fridge .mag img'), function (i) { return i.getAttribute('src'); });
+    if (!fotos.length) return;
+    var giros = [-4, 3, -2, 4, -3, 2, -1, 3];
+    document.querySelectorAll('.mini-grid').forEach(function (g) {
+      var n = +g.getAttribute('data-n');
+      for (var i = 0; i < n; i++) {
+        var t = document.createElement('i');
+        t.style.backgroundImage = 'url("' + fotos[i % fotos.length] + '")';
+        t.style.setProperty('--r', giros[i % giros.length] + 'deg');
+        g.appendChild(t);
+      }
+    });
+  })();
+
+  // Animações que acontecem uma vez ao chegar na seção (simulador e trilha do "Como funciona")
+  (function () {
+    var els = Array.prototype.slice.call(document.querySelectorAll('.reveal, #trilha'));
     if (!('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('in'); }); return; }
     var io = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.25 });
     els.forEach(function (el) { io.observe(el); });
   })();
 </script>
