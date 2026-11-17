@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /gabarito/
 
 Sitemap: https://fotogrude.buytoday99.com/sitemap.xml
