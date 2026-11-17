@@ -58,7 +58,8 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 .cell.vazia{display:flex;align-items:center;justify-content:center;color:#A9B3B9;font-size:7mm;font-weight:700}
 .cell img{position:absolute;max-width:none;pointer-events:none;user-select:none}
 .cell.sel{outline:2.5px solid var(--accent);outline-offset:1px;z-index:2}
-.cell.tem-foto{cursor:grab}
+.cell.tem-foto{cursor:grab;background:#fff}
+.zoom output{min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
 .cell.tem-foto:active{cursor:grabbing}
 .guia-corte{position:absolute;inset:0;border:0.25mm solid #9AA4AA;pointer-events:none;z-index:1}
 .guia-final{position:absolute;border:0.25mm dashed rgba(255,255,255,.95);box-shadow:0 0 0 0.2mm rgba(0,0,0,.35);pointer-events:none;z-index:1}
@@ -144,9 +145,10 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 
     <div class="editor" id="editor" hidden>
       <div class="editor-topo"><h2 id="editor-titulo">Foto selecionada</h2><button type="button" class="fechar" id="fechar-editor" aria-label="Fechar ajuste da foto">×</button></div>
-      <label class="zoom" for="zoom">Zoom <input type="range" id="zoom" min="100" max="400" value="100"></label>
-      <p class="dica">Arraste a foto dentro do quadrado para ajustar o enquadramento. A parte fora da linha tracejada dobra para trás.</p>
+      <label class="zoom" for="zoom">Zoom <input type="range" id="zoom" min="20" max="400" value="100"><output id="zoom-valor">100%</output></label>
+      <p class="dica">Arraste a foto para qualquer lado. Com zoom abaixo de 100% a foto inteira cabe e o espaço que sobrar sai em branco. A parte fora da linha tracejada dobra para trás.</p>
       <div class="linha">
+        <button type="button" class="btn" id="centralizar">Centralizar</button>
         <label class="btn btn-file">Trocar<input type="file" id="trocar" accept="image/*" aria-label="Trocar a foto selecionada"></label>
         <button type="button" class="btn" id="repetir">Repetir na folha</button>
         <button type="button" class="btn" id="remover">Remover</button>
@@ -188,11 +190,21 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     return c;
   }
 
-  // Posição da foto dentro do quadrado (em % do lado), estilo "cobrir" + zoom + arraste
+  // Posição da foto dentro do quadrado (em % do lado). Zoom 100% = a foto cobre o quadrado.
+  // dx/dy = deslocamento livre do centro; o que sobrar vazio sai em branco.
   function caixa(f) {
     var a = f.w / f.h, z = f.zoom;
     var w = (a >= 1 ? a : 1) * 100 * z, h = (a >= 1 ? 1 : 1 / a) * 100 * z;
-    return { w: w, h: h, l: (100 - w) * f.px, t: (100 - h) * f.py };
+    return { w: w, h: h, l: (100 - w) / 2 + f.dx, t: (100 - h) / 2 + f.dy };
+  }
+  // não deixa a foto sair inteira do quadrado (sempre fica um pedaço para pegar)
+  function limitar(f) {
+    var b = caixa(f), mx = (100 + b.w) / 2 - 8, my = (100 + b.h) / 2 - 8;
+    f.dx = Math.max(-mx, Math.min(mx, f.dx)); f.dy = Math.max(-my, Math.min(my, f.dy));
+  }
+  function aplicarCaixa(im, f) {
+    var b = caixa(f);
+    im.style.width = b.w + '%'; im.style.height = b.h + '%'; im.style.left = b.l + '%'; im.style.top = b.t + '%';
   }
 
   function render() {
@@ -275,19 +287,17 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       if (!fotos[idx]) return;
       // no toque, o primeiro toque só seleciona; arrastar vale para a foto já selecionada
       if (e.pointerType !== 'mouse' && sel !== idx) return;
-      ini = { x: e.clientX, y: e.clientY, px: fotos[idx].px, py: fotos[idx].py };
+      ini = { x: e.clientX, y: e.clientY, dx: fotos[idx].dx, dy: fotos[idx].dy };
       moveu = false; cell.setPointerCapture(e.pointerId);
     });
     cell.addEventListener('pointermove', function (e) {
       if (!ini) return;
-      var f = fotos[idx], b = caixa(f), lado = cell.getBoundingClientRect().width || 1;
+      var f = fotos[idx], lado = cell.getBoundingClientRect().width || 1;
       var dx = (e.clientX - ini.x) / lado * 100, dy = (e.clientY - ini.y) / lado * 100;
       if (Math.abs(dx) + Math.abs(dy) > 1) moveu = true;
-      // arrastar a foto para a direita mostra mais da esquerda
-      if (b.w > 100) f.px = Math.min(1, Math.max(0, ini.px - dx / (b.w - 100)));
-      if (b.h > 100) f.py = Math.min(1, Math.max(0, ini.py - dy / (b.h - 100)));
-      var nb = caixa(f), im = cell.querySelector('img');
-      im.style.left = nb.l + '%'; im.style.top = nb.t + '%';
+      // a foto acompanha o dedo/mouse livremente, para qualquer lado
+      f.dx = ini.dx + dx; f.dy = ini.dy + dy; limitar(f);
+      aplicarCaixa(cell.querySelector('img'), f);
     });
     cell.addEventListener('pointerup', function () {
       var era = ini; ini = null;
@@ -315,13 +325,14 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     if (!f) return;
     $('editor-titulo').textContent = 'Ímã ' + (sel + 1);
     $('zoom').value = Math.round(f.zoom * 100);
+    $('zoom-valor').textContent = Math.round(f.zoom * 100) + '%';
   }
 
   function carregar(file) {
     return new Promise(function (ok) {
       if (!file || !/^image\//.test(file.type)) return ok(null);
       var url = URL.createObjectURL(file), im = new Image();
-      im.onload = function () { ok({ url: url, w: im.naturalWidth, h: im.naturalHeight, zoom: 1, px: .5, py: .5 }); };
+      im.onload = function () { ok({ url: url, w: im.naturalWidth, h: im.naturalHeight, zoom: 1, dx: 0, dy: 0 }); };
       im.onerror = function () { URL.revokeObjectURL(url); ok(null); };
       im.src = url;
     });
@@ -350,9 +361,17 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
   });
   $('zoom').addEventListener('input', function () {
     var f = fotos[sel]; if (!f) return;
-    f.zoom = this.value / 100;
-    var c = document.querySelector('.cell[data-i="' + sel + '"] img'), b = caixa(f);
-    if (c) { c.style.width = b.w + '%'; c.style.height = b.h + '%'; c.style.left = b.l + '%'; c.style.top = b.t + '%'; }
+    f.zoom = this.value / 100; limitar(f);
+    $('zoom-valor').textContent = this.value + '%';
+    var c = document.querySelector('.cell[data-i="' + sel + '"] img');
+    if (c) aplicarCaixa(c, f);
+  });
+  $('centralizar').addEventListener('click', function () {
+    var f = fotos[sel]; if (!f) return;
+    f.zoom = 1; f.dx = 0; f.dy = 0;
+    $('zoom').value = 100; $('zoom-valor').textContent = '100%';
+    var c = document.querySelector('.cell[data-i="' + sel + '"] img');
+    if (c) aplicarCaixa(c, f);
   });
   $('remover').addEventListener('click', function () {
     if (!fotos[sel]) return;
@@ -366,7 +385,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     var f = fotos[sel]; if (!f) return;
     var c = cfg(), p = Math.floor(sel / c.porFolha);
     for (var i = p * c.porFolha; i < (p + 1) * c.porFolha; i++) {
-      if (!fotos[i]) fotos[i] = { url: f.url, w: f.w, h: f.h, zoom: f.zoom, px: f.px, py: f.py };
+      if (!fotos[i]) fotos[i] = { url: f.url, w: f.w, h: f.h, zoom: f.zoom, dx: f.dx, dy: f.dy };
     }
     render();
   });

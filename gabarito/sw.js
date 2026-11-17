@@ -1,6 +1,6 @@
 /* Service worker do Gabarito: guarda o app para abrir sem internet.
    Ao mudar algum arquivo do app, aumente a VERSAO para os aparelhos pegarem a nova. */
-var VERSAO = 'gabarito-v1';
+var VERSAO = 'gabarito-v2';
 var ARQUIVOS = ['./', './index.html', './manifest.webmanifest', './icone-192.png', './icone-512.png', './icone-maskable-512.png'];
 
 self.addEventListener('install', function (e) {
