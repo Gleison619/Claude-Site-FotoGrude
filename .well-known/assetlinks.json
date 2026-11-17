@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.buytoday99.fotogrude.twa",
+        "sha256_cert_fingerprints": ["5D:CA:16:9A:E7:B3:1C:20:85:BD:03:14:DC:33:74:7C:A6:51:2E:FF:5E:B1:04:63:9E:AD:54:90:54:64:B2:12"]
+      }
+    }]
