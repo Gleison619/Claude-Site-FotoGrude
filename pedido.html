@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="config.js?v=5"></script>
+<script src="config.js?v=6"></script>
 <style>
 :root{--accent:#A21F52;--accent-dark:#7A1640;--ink:#1F1A1C;--muted:#4A4246;--bg:#FBFAF7;--pink:#FCE3EC;--line:#E6E0DD;--gold:#F5C04A;--green:#1F8F4E}
 *{box-sizing:border-box}
@@ -311,7 +311,9 @@ main{padding:40px 0 96px}
     var o = ENVIO[k];
     if (o.tipo === 'gratis') return { t: 'Grátis', cinza: false };
     if (o.tipo === 'combinar') return { t: 'A combinar', cinza: true };
-    return regiao ? { t: formatarReais(o.valores[regiao]), cinza: false } : { t: 'informe o CEP', cinza: true };
+    if (!regiao) return { t: 'informe o CEP', cinza: true };
+    var v = valorEnvio(k, regiao);
+    return v === null ? { t: 'consultar', cinza: true } : { t: formatarReais(v), cinza: false };
   }
   function desenharEnvio() {
     lista.innerHTML = '';
@@ -338,8 +340,10 @@ main{padding:40px 0 96px}
   }
   function calcularFrete() {
     var o = envio ? ENVIO[envio] : null;
-    frete = (o && o.tipo === 'regiao' && regiao) ? o.valores[regiao] : 0;
+    frete = (o && o.tipo === 'regiao' && regiao) ? (valorEnvio(envio, regiao) || 0) : 0;
   }
+  // Correios escolhido para uma região ainda sem valor: frete combinado no WhatsApp
+  function semValor() { return !!(envio && ENVIO[envio].tipo === 'regiao' && regiao && valorEnvio(envio, regiao) === null); }
   function lerCep() {
     var r = regiaoPorCep(campoCep.value);
     msgCep.classList.remove('erro');
@@ -368,6 +372,7 @@ main{padding:40px 0 96px}
     if (o.tipo === 'gratis') return o.nome + (curto ? ' · grátis' : ' (sem frete)');
     if (o.tipo === 'combinar') return o.nome + (curto ? ' · a combinar' : ' (valor a combinar)');
     if (!regiao) return o.nome + (curto ? ' · informe o CEP' : ' (frete a calcular)');
+    if (semValor()) return o.nome + (curto ? ' · consultar' : ' (frete a consultar, CEP ' + cep + ')');
     return curto ? formatarReais(frete) + ' · ' + o.nome.replace(/ \(Correios\)/, '') : o.nome + ' ' + formatarReais(frete) + ' para CEP ' + cep;
   }
   function textoPedido() {
@@ -392,6 +397,7 @@ main{padding:40px 0 96px}
       !o ? 'Escolha a forma de entrega no resumo do pedido. O valor do frete entra no total.' :
       o.tipo === 'combinar' ? 'O valor da entrega particular é combinado pelo WhatsApp e pago à parte.' :
       o.tipo === 'regiao' && !regiao ? 'Digite seu CEP no resumo para somar o frete ao total.' :
+      semValor() ? 'O frete para a sua região é informado pelo WhatsApp e pago à parte.' :
       'O valor da entrega já está somado no total.';
 
     if (!kit.escolheQtd) {

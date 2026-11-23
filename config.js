@@ -45,9 +45,11 @@ var PROMO = {
 /* Formas de entrega que o cliente escolhe na página de pedido.
    - ativo: false esconde a opção.
    - Correios (tipo "regiao"): valor em CENTAVOS por região do CEP de destino.
-     Ex.: sudeste: 1590 = R$ 15,90. Enquanto algum valor da opção for null,
-     ela NÃO aparece para o cliente.
-   - "prazo" é um texto opcional, ex.: "5 a 9 dias úteis após a produção". */
+     Ex.: sudeste: 1590 = R$ 15,90. Região com null aparece como "consultar"
+     (frete combinado no WhatsApp). Opção com todos os valores null fica escondida.
+   - "prazo" é um texto opcional, ex.: "5 a 9 dias úteis após a produção".
+   Valores de MG simulados em 23/11/2026 nos Correios: origem Conselheiro Lafaiete,
+   destino Belo Horizonte, pacote 16x11x2 cm até 300 g. */
 var REGIOES = {
   mg: "Minas Gerais", sudeste: "Sudeste (SP, RJ, ES)", sul: "Sul",
   centroOeste: "Centro-Oeste", nordeste: "Nordeste", norte: "Norte"
@@ -58,12 +60,12 @@ var ENVIO = {
     valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
   },
   pac: {
-    nome: "PAC (Correios)", tipo: "regiao", ativo: true, prazo: "",
-    valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
+    nome: "PAC (Correios)", tipo: "regiao", ativo: true, prazo: "Em MG, cerca de 5 dias úteis após a postagem",
+    valores: { mg: 2690, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
   },
   sedex: {
-    nome: "SEDEX (Correios)", tipo: "regiao", ativo: true, prazo: "",
-    valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
+    nome: "SEDEX (Correios)", tipo: "regiao", ativo: true, prazo: "Em MG, cerca de 1 dia útil após a postagem",
+    valores: { mg: 3160, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
   },
   particular: {
     nome: "Entrega particular", tipo: "combinar", ativo: true,
@@ -90,15 +92,20 @@ function regiaoPorCep(cep) {
   if (p2 >= 80) return "sul";                           // PR, SC, RS
   return null;
 }
-/* Opções de entrega prontas para mostrar (Correios só com todos os valores preenchidos). */
+/* Opções de entrega prontas para mostrar (Correios com pelo menos uma região preenchida). */
 function opcoesEnvio() {
   return Object.keys(ENVIO).filter(function (k) {
     var o = ENVIO[k];
     if (!o.ativo) return false;
     if (o.tipo !== "regiao") return true;
-    for (var r in REGIOES) { if (o.valores[r] === null || o.valores[r] === undefined) return false; }
-    return true;
+    for (var r in REGIOES) { if (typeof o.valores[r] === "number") return true; }
+    return false;
   });
+}
+/* Valor do frete de uma opção para a região, ou null se for "consultar". */
+function valorEnvio(k, regiao) {
+  var v = ENVIO[k] && ENVIO[k].valores ? ENVIO[k].valores[regiao] : null;
+  return typeof v === "number" ? v : null;
 }
 
 /* Avaliações de clientes (só aparecem no site quando houver pelo menos uma).
