@@ -163,6 +163,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
         <legend>Brindes de Natal (arte pronta, sem foto)</legend>
         <div class="galeria" id="galeria" role="radiogroup" aria-label="Arte do brinde"></div>
         <p class="dica" id="galeria-nome"></p>
+        <label class="texto" id="brinde-nome-campo" hidden>Nome no brinde personalizado<input type="text" id="brinde-nome" value="Família Silva" maxlength="36"></label>
         <div class="galeria-acoes">
           <button type="button" class="btn" id="brinde-1">Adicionar 1</button>
           <button type="button" class="btn" id="brinde-folha">Completar a folha</button>
@@ -334,7 +335,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     if (f && f.arte) {
       // brinde: arte pronta ocupando o papel inteiro (inclui a parte que dobra)
       var E = NATAL.ESTAMPAS[f.arte];
-      el.appendChild(svgCamada(c.viewBox, E.arte, NATAL.textos(E, {})));
+      el.appendChild(svgCamada(c.viewBox, E.arte, NATAL.textos(E, valoresBrinde())));
       return null;
     }
     if (c.temMoldura) el.appendChild(svgCamada(c.viewBox, c.mold.fundo));
@@ -703,7 +704,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
           // brinde: arte pronta + textos
           var E = NATAL.ESTAMPAS[f.arte];
           if (artesImg[f.arte]) x.drawImage(artesImg[f.arte], cx, cy, L, L);
-          NATAL.textos(E, {}).forEach(function (t) { textoCanvas(x, t, cx + ox + t.x * k, cy + ox + t.y * k, k); });
+          NATAL.textos(E, valoresBrinde()).forEach(function (t) { textoCanvas(x, t, cx + ox + t.x * k, cy + ox + t.y * k, k); });
           x.restore();
           if (c.gCorte) { x.save(); x.strokeStyle = '#9AA4AA'; x.lineWidth = 0.25 * DPMM; caminho(x, cx, cy, L, L, raio); x.stroke(); x.restore(); }
           continue;
@@ -835,26 +836,37 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 
   // ---------- Galeria de brindes (arte pronta, sem foto) ----------
   var estampa = Object.keys(NATAL.ESTAMPAS)[0];
-  (function () {
+  function valoresBrinde() { return { nome: $('brinde-nome').value }; }
+  function montarGaleria() {
     var gal = $('galeria');
+    gal.innerHTML = '';
     Object.keys(NATAL.ESTAMPAS).forEach(function (k) {
       var E = NATAL.ESTAMPAS[k];
       var b = document.createElement('button');
       b.type = 'button'; b.setAttribute('role', 'radio'); b.dataset.k = k;
       b.setAttribute('aria-label', E.nome); b.title = E.nome;
-      var s = svgCamada('0 0 100 100', E.arte, NATAL.textos(E, {}));
+      var s = svgCamada('0 0 100 100', E.arte, NATAL.textos(E, valoresBrinde()));
       s.setAttribute('class', ''); s.removeAttribute('preserveAspectRatio');
       b.appendChild(s);
       b.addEventListener('click', function () { escolherEstampa(k); });
       gal.appendChild(b);
     });
     escolherEstampa(estampa);
-  })();
+  }
+  montarGaleria();
   function escolherEstampa(k) {
     estampa = k;
     document.querySelectorAll('#galeria button').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.k === k)); });
     $('galeria-nome').textContent = 'Arte escolhida: ' + NATAL.ESTAMPAS[k].nome + '.';
+    // o campo do nome só aparece para artes que usam o nome
+    var usaNome = (NATAL.ESTAMPAS[k].textos || []).some(function (t) { return t.campo === 'nome'; });
+    $('brinde-nome-campo').hidden = !usaNome;
   }
+  var adiarNome;
+  $('brinde-nome').addEventListener('input', function () {
+    clearTimeout(adiarNome);
+    adiarNome = setTimeout(function () { montarGaleria(); render(); }, 250);
+  });
   function vagas() {
     // espaços livres até o fim da última folha (ou da primeira, se estiver vazia)
     var c = cfg(), total = Math.max(1, Math.ceil(fotos.length / c.porFolha)) * c.porFolha, livres = [];

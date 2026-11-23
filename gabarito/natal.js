@@ -57,9 +57,9 @@ var NATAL = (function () {
     }
     return s + '</g>';
   }
-  function laco(x, y, s, cor) {
+  function laco(x, y, s, cor, escuro) {
     cor = cor || '#C8102E';
-    var esc = '#8E0B21';
+    var esc = escuro || '#8E0B21';
     return '<g transform="translate(' + n(x) + ' ' + n(y) + ') scale(' + n(s) + ')">' +
       '<path d="M-1,1 L-6,12 L-3.6,10.6 L-2.6,13 L1,2Z" fill="' + esc + '"/>' +
       '<path d="M1,1 L6,12 L3.6,10.6 L2.6,13 L-1,2Z" fill="' + cor + '"/>' +
@@ -319,6 +319,101 @@ var NATAL = (function () {
       arte: bg('#123D2C') + estrela(16, 16, 2, OURO) + estrela(84, 18, 2.2, OURO) + brilho(14, 64, 1.8, OURO) + brilho(86, 62, 1.8, OURO) +
         sino(41, 44, -16, 1.15) + sino(59, 44, 16, 1.15) + laco(50, 29, .8) + folha(44, 30, 200, .9) + folha(56, 30, -20, .9),
       textos: [{ fixo: 'Boas Festas', x: 50, y: 86, size: 15, font: 'script', fill: OURO }]
+    },
+    personalizado: {
+      nome: 'Personalizado com nome',
+      arte: bg('#7E0F16') + '<circle cx="50" cy="50" r="55" fill="#9B1720" opacity=".55"/>' +
+        galho(-6, 2, 12, 26, 1) + galho(2, -6, 78, 22, 1) + azevinho(9, 9, 45, 1.05) +
+        galho(106, 98, 192, 26, 1) + galho(98, 106, 258, 22, 1) + azevinho(91, 91, 225, 1.05) +
+        estrela(84, 14, 2.2, OURO) + estrela(16, 86, 2, OURO) +
+        '<path d="M30,52 L70,52" stroke="' + OURO + '" stroke-width=".5"/>' + estrela(50, 52, 1.6, OURO),
+      textos: [
+        { fixo: 'Feliz Natal', x: 50, y: 43, size: 17, font: 'script', fill: CREME },
+        { campo: 'nome', x: 50, y: 66, size: 8.5, font: 'serif', italic: true, fill: OURO, max: 18 }
+      ]
+    },
+    rena: {
+      nome: 'Rena',
+      arte: bg('#1F6B45') + pontosNeve('#fff', 17) +
+        // chifres
+        '<g stroke="#6B4423" stroke-width="2.6" stroke-linecap="round" fill="none">' +
+        '<path d="M41,36 Q36,24 30,12"/><path d="M36,26 Q30,24 26,20"/><path d="M33,19 Q36,14 38,10"/>' +
+        '<path d="M59,36 Q64,24 70,12"/><path d="M64,26 Q70,24 74,20"/><path d="M67,19 Q64,14 62,10"/></g>' +
+        // orelhas
+        '<ellipse cx="31" cy="45" rx="8" ry="4" transform="rotate(-25 31 45)" fill="#8B5A2B"/><ellipse cx="31" cy="45" rx="4.5" ry="2" transform="rotate(-25 31 45)" fill="#E8A59A"/>' +
+        '<ellipse cx="69" cy="45" rx="8" ry="4" transform="rotate(25 69 45)" fill="#8B5A2B"/><ellipse cx="69" cy="45" rx="4.5" ry="2" transform="rotate(25 69 45)" fill="#E8A59A"/>' +
+        // cabeça, focinho, olhos, nariz
+        '<ellipse cx="50" cy="55" rx="16" ry="20" fill="#8B5A2B"/>' +
+        '<ellipse cx="50" cy="67" rx="11" ry="8.5" fill="#C99A6B"/>' +
+        '<circle cx="43.5" cy="50" r="3.2" fill="#fff"/><circle cx="56.5" cy="50" r="3.2" fill="#fff"/>' +
+        '<circle cx="44.2" cy="50.6" r="1.7" fill="#1F1A1C"/><circle cx="55.8" cy="50.6" r="1.7" fill="#1F1A1C"/>' +
+        '<circle cx="50" cy="62" r="4.6" fill="#D7263D"/><circle cx="48.5" cy="60.5" r="1.3" fill="#fff" opacity=".7"/>' +
+        '<path d="M45,70 Q50,73.5 55,70" stroke="#6B4423" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+        // cachecol
+        '<path d="M36,73 Q50,80 64,73 L64,79 Q50,86 36,79Z" fill="#C8102E"/>',
+      textos: [{ fixo: 'Feliz Natal', x: 50, y: 96, size: 11, font: 'script', fill: CREME }]
+    },
+    anjo: {
+      nome: 'Anjo',
+      arte: bg('#F7EFE2') + estrela(14, 14, 2, '#D4A63A') + estrela(86, 18, 1.8, '#D4A63A') + brilho(18, 60, 1.8, '#D4A63A') + brilho(84, 58, 1.8, '#D4A63A') + estrela(80, 84, 1.4, '#D4A63A') +
+        // asas
+        '<path d="M44,46 Q18,30 13,54 Q21,52 23,60 Q30,55 33,63 Q38,56 45,58Z" fill="#FFFFFF" stroke="#E0C78A" stroke-width=".8"/>' +
+        '<path d="M56,46 Q82,30 87,54 Q79,52 77,60 Q70,55 67,63 Q62,56 55,58Z" fill="#FFFFFF" stroke="#E0C78A" stroke-width=".8"/>' +
+        // túnica
+        '<path d="M43,40 Q38,62 31,80 L69,80 Q62,62 57,40Z" fill="#FFFFFF" stroke="#E0C78A" stroke-width=".8"/>' +
+        '<path d="M31,80 L69,80 L68,77 L32,77Z" fill="#E0B44A"/>' +
+        // rosto, cabelo, auréola
+        '<circle cx="50" cy="32" r="7" fill="#F6CBA8"/>' +
+        '<path d="M43,32 Q43,23 50,23 Q57,23 57,32 Q55,27 50,27 Q45,27 43,32Z" fill="#E7B84B"/>' +
+        '<ellipse cx="50" cy="20" rx="8" ry="2.4" fill="none" stroke="#D4A63A" stroke-width="1.4"/>' +
+        '<path d="M47,33 Q48,34.5 49,33" stroke="#7A4A23" stroke-width=".7" fill="none"/><path d="M51,33 Q52,34.5 53,33" stroke="#7A4A23" stroke-width=".7" fill="none"/>' +
+        '<circle cx="46.5" cy="35.5" r="1.3" fill="#F29C9C" opacity=".6"/><circle cx="53.5" cy="35.5" r="1.3" fill="#F29C9C" opacity=".6"/>',
+      textos: [{ fixo: 'Glória a Deus', x: 50, y: 94, size: 10.5, font: 'script', fill: '#8E5A12' }]
+    },
+    guirlanda: {
+      nome: 'Guirlanda "Paz"',
+      arte: bg('#FFF9F0') + (function () {
+        var s = '';
+        for (var i = 0; i < 20; i++) {
+          var a = i * Math.PI * 2 / 20, x = 50 + Math.cos(a) * 23, y = 46 + Math.sin(a) * 23;
+          s += folha(x, y, a * 180 / Math.PI + 90 + (i % 2 ? 25 : -25), 1.05, i % 2 ? '#17573A' : '#1E6B3A');
+        }
+        for (var j = 0; j < 7; j++) { var b = j * Math.PI * 2 / 7 + .3; s += baga(50 + Math.cos(b) * 21, 46 + Math.sin(b) * 21, 1.5); }
+        return s;
+      })() + laco(50, 67, .8) + estrela(14, 14, 1.6, '#D4A63A') + estrela(86, 14, 1.6, '#D4A63A'),
+      textos: [
+        { fixo: 'Paz', x: 50, y: 52, size: 20, font: 'script', fill: '#B3122E' },
+        { fixo: 'Feliz Natal', x: 50, y: 94, size: 10, font: 'script', fill: '#1E6B3A' }
+      ]
+    },
+    presente: {
+      nome: 'Presente "Com carinho"',
+      arte: bg('#9E1B2B') + pontosNeve('#F3D98B', 21) +
+        '<rect x="28" y="46" width="44" height="34" rx="2" fill="#1E6B3A"/>' +
+        '<rect x="24" y="38" width="52" height="11" rx="2" fill="#17573A"/>' +
+        '<rect x="46" y="38" width="8" height="42" fill="' + OURO + '"/>' +
+        '<rect x="28" y="58" width="44" height="6" fill="' + OURO + '" opacity=".9"/>' +
+        laco(50, 37, .9, OURO, '#A87A1A') + brilho(20, 24, 2.4, '#FFF3C4') + brilho(80, 28, 2, '#FFF3C4'),
+      textos: [{ fixo: 'Com carinho', x: 50, y: 95, size: 11, font: 'script', fill: CREME }]
+    },
+    gratidao: {
+      nome: '"Gratidão"',
+      arte: bg('#F7EFE2') + '<rect x="6" y="6" width="88" height="88" rx="6" fill="none" stroke="#D4A63A" stroke-width=".6"/>' +
+        brilho(20, 22, 2.4, '#D4A63A') + estrela(80, 20, 2, '#D4A63A') + brilho(82, 80, 2, '#D4A63A') + estrela(20, 80, 1.6, '#D4A63A') +
+        azevinho(50, 82, 0, .75),
+      textos: [
+        { fixo: 'Gratidão', x: 50, y: 52, size: 19, font: 'script', fill: '#8E5A12' },
+        { fixo: 'por este ano juntos', x: 50, y: 64, size: 5.4, font: 'serif', italic: true, fill: '#5E4A2A' }
+      ]
+    },
+    bengala: {
+      nome: 'Bengala doce',
+      arte: bg('#E6F2EC') + [[12, 14, 2.4], [88, 12, 2.2], [14, 70, 1.8], [86, 66, 2]].map(function (p) { return floco(p[0], p[1], p[2], '#9CC8B4'); }).join('') +
+        '<path d="M57,77 L57,36 Q57,18 43,18 Q29,18 29,33" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round"/>' +
+        '<path d="M57,77 L57,36 Q57,18 43,18 Q29,18 29,33" stroke="#D21F3C" stroke-width="10" fill="none" stroke-linecap="butt" stroke-dasharray="4 4"/>' +
+        '<path d="M57,77 L57,36 Q57,18 43,18 Q29,18 29,33" stroke="#B3122E" stroke-width="10" fill="none" stroke-linecap="round" opacity=".18"/>' +
+        laco(57, 52, .75) + folha(52, 56, 160, .8) + folha(62, 56, 20, .8),
+      textos: [{ fixo: 'Doce Natal', x: 50, y: 95, size: 11, font: 'script', fill: '#B3122E' }]
     },
     anoNovo: {
       nome: 'Feliz Ano Novo',
