@@ -282,6 +282,11 @@ section.block{padding:96px 24px}
 .gift{background:#fff;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:8px}
 .gift h3{font-size:18px}
 .gift p{font-size:15px;line-height:1.5;color:var(--muted)}
+.frete-gratis{display:flex;gap:16px;align-items:flex-start;background:#F1FAF4;border:1.5px solid #1F8F4E;border-radius:18px;padding:18px 20px;margin:-16px 0 32px;color:#14633A;max-width:760px}
+.frete-gratis svg{flex:none;margin-top:2px}
+.frete-gratis strong{display:block;font-size:18px;color:#14633A;margin-bottom:4px}
+.frete-gratis p{margin:0;font-size:16px;line-height:1.55;color:var(--ink)}
+.frete-gratis b{color:#14633A}
 .temas-cta{margin-top:28px;background:#fff;border-radius:18px;padding:22px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
 .temas-cta p{font-size:17px;line-height:1.5;color:var(--ink);max-width:640px}
 
@@ -396,7 +401,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
 <body>
 
 <!-- Configuração (WhatsApp, Pix e links de pagamento) fica no arquivo config.js -->
-<script src="config.js?v=6"></script>
+<script src="config.js?v=7"></script>
 <script>
   var WHATSAPP = LOJA.whatsapp;
 </script>
@@ -558,6 +563,14 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         <h2>Escolha seu pacote</h2>
         <p>Cada ímã tem 5x5 cm e cada um pode ter uma foto diferente. Quanto maior o kit, menor o preço por ímã. A economia mostrada é em relação ao ímã avulso (R$ 7,90).</p>
       </div>
+      <div class="frete-gratis" role="note">
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div>
+          <strong>Entrega grátis na região</strong>
+          <p><b>Conselheiro Lafaiete:</b> a partir de 6 ímãs (Kit Mini ou maior).<br>
+          <b>Congonhas, Ouro Branco, Itaverava e Queluzito:</b> a partir de 10 ímãs (Kit Memórias).</p>
+        </div>
+      </div>
       <div class="grid plans">
         <div class="plan side">
           <h3>Ímã Avulso</h3>
@@ -647,7 +660,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         <details><summary>Posso misturar fotos diferentes no mesmo kit?</summary><p>Pode! Cada ímã pode ter uma foto diferente.</p></details>
         <details><summary>Quanto tempo demora?</summary><p>A produção leva 3 dias úteis após o envio das fotos, mais o prazo de entrega da sua região.</p></details>
         <details><summary>Como faço o pagamento?</summary><p>Aceitamos Pix e cartão. É só chamar no WhatsApp que enviamos os dados.</p></details>
-        <details><summary>Vocês entregam na minha cidade?</summary><p>Enviamos para todo o Brasil. O frete é calculado pelo seu CEP.</p></details>
+        <details><summary>Vocês entregam na minha cidade?</summary><p>Enviamos para todo o Brasil pelos Correios (PAC ou SEDEX), com o frete calculado pelo seu CEP. Também dá para retirar em mãos ou combinar uma entrega particular. A entrega é grátis em Conselheiro Lafaiete a partir de 6 ímãs, e em Congonhas, Ouro Branco, Itaverava e Queluzito a partir de 10 ímãs.</p></details>
       </div>
     </div>
   </section>

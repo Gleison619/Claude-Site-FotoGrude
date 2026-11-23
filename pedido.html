@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="config.js?v=6"></script>
+<script src="config.js?v=7"></script>
 <style>
 :root{--accent:#A21F52;--accent-dark:#7A1640;--ink:#1F1A1C;--muted:#4A4246;--bg:#FBFAF7;--pink:#FCE3EC;--line:#E6E0DD;--gold:#F5C04A;--green:#1F8F4E}
 *{box-sizing:border-box}
@@ -87,7 +87,10 @@ main{padding:40px 0 96px}
 .envio-op .preco{font-weight:700;font-size:15px;white-space:nowrap}
 .envio-op .preco.cinza{color:var(--muted);font-weight:500;font-size:13px}
 .envio-op:has(input:checked){border-color:var(--accent);background:#FFF5F8}
-.envio-op:has(input:disabled){opacity:.55;cursor:not-allowed}
+.envio-op:has(input:disabled){opacity:.7;cursor:not-allowed}
+.envio-op.destaque{border-color:#1F8F4E;background:#F1FAF4}
+.envio-op.destaque .preco:not(.cinza){color:#14633A}
+.envio-op.destaque:has(input:checked){border-color:#1F8F4E;background:#E3F5E9}
 .cep-msg.erro{color:#B42318}
 .total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:16px}
 .total strong{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;color:var(--accent)}
@@ -307,9 +310,12 @@ main{padding:40px 0 96px}
   var lista = document.getElementById('envio-lista');
   var campoCep = document.getElementById('cep'), msgCep = document.getElementById('cep-msg');
 
+  var cidade = '', regra = null;   // cidade do CEP e regra de entrega grátis dela
+  function ganhaGratis() { return !!(regra && qtd >= regra.minimo); }
   function precoTexto(k) {
     var o = ENVIO[k];
     if (o.tipo === 'gratis') return { t: 'Grátis', cinza: false };
+    if (o.tipo === 'local') return ganhaGratis() ? { t: 'Grátis', cinza: false } : { t: 'a partir de ' + regra.minimo + ' ímãs', cinza: true };
     if (o.tipo === 'combinar') return { t: 'A combinar', cinza: true };
     if (!regiao) return { t: 'informe o CEP', cinza: true };
     var v = valorEnvio(k, regiao);
@@ -317,14 +323,32 @@ main{padding:40px 0 96px}
   }
   function desenharEnvio() {
     lista.innerHTML = '';
+    // entrega grátis da cidade perdeu a validade (CEP mudou ou diminuiu a quantidade)
+    if (envio === 'local' && !ganhaGratis()) envio = null;
     opcoesEntrega.forEach(function (k) {
-      var o = ENVIO[k], p = precoTexto(k);
-      var lab = document.createElement('label'); lab.className = 'envio-op';
+      var o = ENVIO[k];
+      if (o.tipo === 'local' && !regra) return;   // só aparece para as cidades com entrega grátis
+      var p = precoTexto(k);
+      var lab = document.createElement('label'); lab.className = 'envio-op' + (o.tipo === 'local' ? ' destaque' : '');
       var r = document.createElement('input'); r.type = 'radio'; r.name = 'envio'; r.value = k; r.checked = envio === k;
-      var nome = document.createElement('strong'); nome.textContent = o.nome;
+      var nome = document.createElement('strong'); nome.textContent = o.tipo === 'local' ? 'Entrega grátis em ' + regra.cidade : o.nome;
       var preco = document.createElement('span'); preco.className = 'preco' + (p.cinza ? ' cinza' : ''); preco.textContent = p.t;
       lab.appendChild(r); lab.appendChild(nome); lab.appendChild(preco);
-      if (o.prazo) { var s = document.createElement('small'); s.textContent = o.prazo; lab.appendChild(s); }
+      var obs = o.prazo;
+      if (o.tipo === 'local' && !ganhaGratis()) {
+        var falta = regra.minimo - qtd;
+        r.disabled = true;
+        if (kit.escolheQtd) {
+          obs = (falta === 1 ? 'Falta 1 ímã' : 'Faltam ' + falta + ' ímãs') + ' para ganhar a entrega grátis em ' + regra.cidade + '.';
+        } else {
+          // kit fechado: sugere o menor kit que libera a entrega grátis
+          var sug = Object.keys(KITS).map(function (c) { return KITS[c]; })
+            .filter(function (x) { return !x.escolheQtd && !x.sobConsulta && x.qtd >= regra.minimo; })
+            .sort(function (a, b) { return a.qtd - b.qtd; })[0];
+          obs = 'Grátis a partir de ' + regra.minimo + ' ímãs' + (sug ? ': com o ' + sug.nome + ' (' + sug.qtd + ' ímãs) a entrega sai grátis.' : '.');
+        }
+      }
+      if (obs) { var s = document.createElement('small'); s.textContent = obs; lab.appendChild(s); }
       r.addEventListener('change', function () { escolher(k); });
       lista.appendChild(lab);
     });
@@ -344,11 +368,30 @@ main{padding:40px 0 96px}
   }
   // Correios escolhido para uma região ainda sem valor: frete combinado no WhatsApp
   function semValor() { return !!(envio && ENVIO[envio].tipo === 'regiao' && regiao && valorEnvio(envio, regiao) === null); }
+  var consulta = 0;
   function lerCep() {
     var r = regiaoPorCep(campoCep.value);
     msgCep.classList.remove('erro');
+    cidade = ''; regra = null;
     if (!r) { regiao = null; cep = ''; msgCep.textContent = 'Digite um CEP com 8 números.'; msgCep.classList.add('erro'); }
-    else { regiao = r; cep = campoCep.value; msgCep.textContent = 'Envio para ' + REGIOES[r] + '. Valores estimados; confirmamos no WhatsApp.'; }
+    else {
+      regiao = r; cep = campoCep.value;
+      regra = regraEntregaGratis('', cep);   // primeiro pela faixa de CEP; a consulta abaixo confirma a cidade
+      msgCep.textContent = 'Envio para ' + REGIOES[r] + '. Valores estimados; confirmamos no WhatsApp.';
+      var minha = ++consulta, digitos = cep.replace(/\D/g, '');
+      fetch('https://viacep.com.br/ws/' + digitos + '/json/').then(function (resp) { return resp.json(); }).then(function (dados) {
+        if (minha !== consulta || !dados || dados.erro || !dados.localidade) return;
+        cidade = dados.localidade;
+        regra = dados.uf === 'MG' ? regraEntregaGratis(cidade, '') : null;
+        msgCep.textContent = 'Envio para ' + cidade + ' (' + dados.uf + '). Valores estimados; confirmamos no WhatsApp.';
+        depoisDoCep();
+      }).catch(function () { /* sem internet ou serviço fora: fica a faixa de CEP */ });
+    }
+    depoisDoCep();
+  }
+  function depoisDoCep() {
+    // na cidade com entrega grátis, já deixa a opção escolhida
+    if (ganhaGratis() && (!envio || ENVIO[envio].tipo === 'regiao')) envio = 'local';
     calcularFrete(); desenharEnvio(); atualizar();
   }
   if (opcoesEntrega.length) {
@@ -370,6 +413,7 @@ main{padding:40px 0 96px}
     if (!envio) return curto ? 'Escolha abaixo' : '';
     var o = ENVIO[envio];
     if (o.tipo === 'gratis') return o.nome + (curto ? ' · grátis' : ' (sem frete)');
+    if (o.tipo === 'local') return curto ? 'Grátis · ' + regra.cidade : 'entrega grátis em ' + regra.cidade + ' (CEP ' + cep + ')';
     if (o.tipo === 'combinar') return o.nome + (curto ? ' · a combinar' : ' (valor a combinar)');
     if (!regiao) return o.nome + (curto ? ' · informe o CEP' : ' (frete a calcular)');
     if (semValor()) return o.nome + (curto ? ' · consultar' : ' (frete a consultar, CEP ' + cep + ')');
@@ -398,6 +442,7 @@ main{padding:40px 0 96px}
       o.tipo === 'combinar' ? 'O valor da entrega particular é combinado pelo WhatsApp e pago à parte.' :
       o.tipo === 'regiao' && !regiao ? 'Digite seu CEP no resumo para somar o frete ao total.' :
       semValor() ? 'O frete para a sua região é informado pelo WhatsApp e pago à parte.' :
+      o.tipo === 'local' ? 'Entrega grátis em ' + regra.cidade + '! Combinamos o dia pelo WhatsApp.' :
       'O valor da entrega já está somado no total.';
 
     if (!kit.escolheQtd) {
@@ -445,8 +490,8 @@ main{padding:40px 0 96px}
 
   if (kit.escolheQtd) {
     document.getElementById('qty').hidden = false;
-    document.getElementById('menos').addEventListener('click', function () { if (qtd > 1) { qtd--; atualizar(); } });
-    document.getElementById('mais').addEventListener('click', function () { if (qtd < 50) { qtd++; atualizar(); } });
+    document.getElementById('menos').addEventListener('click', function () { if (qtd > 1) { qtd--; if (opcoesEntrega.length) desenharEnvio(); atualizar(); } });
+    document.getElementById('mais').addEventListener('click', function () { if (qtd < 50) { qtd++; if (regra && qtd === regra.minimo && !envio) envio = 'local'; if (opcoesEntrega.length) { calcularFrete(); desenharEnvio(); } atualizar(); } });
   }
 
   atualizar();

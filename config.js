@@ -55,6 +55,11 @@ var REGIOES = {
   centroOeste: "Centro-Oeste", nordeste: "Nordeste", norte: "Norte"
 };
 var ENVIO = {
+  // aparece só para as cidades de ENTREGA_GRATIS (mais abaixo)
+  local: {
+    nome: "Entrega grátis na sua cidade", tipo: "local", ativo: true,
+    prazo: "Entregamos no seu endereço; combinamos o dia pelo WhatsApp"
+  },
   carta: {
     nome: "Carta registrada (Correios)", tipo: "regiao", ativo: true, prazo: "",
     valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
@@ -76,6 +81,29 @@ var ENVIO = {
     prazo: "Sem frete. Combinamos o local e o horário pelo WhatsApp"
   }
 };
+
+/* Entrega grátis por cidade: a partir de "minimo" ímãs no pedido.
+   "faixas" = faixas de CEP da cidade (reserva quando a consulta de CEP não responde). */
+var ENTREGA_GRATIS = [
+  { cidades: ["Conselheiro Lafaiete"], minimo: 6, faixas: [[36400000, 36409999]] },
+  { cidades: ["Congonhas", "Ouro Branco", "Itaverava", "Queluzito"], minimo: 10,
+    faixas: [[36415000, 36419999], [36420000, 36423999], [36440000, 36440999], [36424000, 36424999]] }
+];
+function semAcento(t) { return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
+/* Regra de entrega grátis para a cidade (nome) ou, sem nome, pelo CEP. Retorna { cidade, minimo } ou null. */
+function regraEntregaGratis(cidade, cep) {
+  var n = semAcento(cidade), d = parseInt(String(cep || "").replace(/\D/g, ""), 10);
+  for (var i = 0; i < ENTREGA_GRATIS.length; i++) {
+    var g = ENTREGA_GRATIS[i];
+    for (var j = 0; j < g.cidades.length; j++) {
+      if (n && semAcento(g.cidades[j]) === n) return { cidade: g.cidades[j], minimo: g.minimo };
+    }
+    if (!n && d) for (var k = 0; k < g.faixas.length; k++) {
+      if (d >= g.faixas[k][0] && d <= g.faixas[k][1]) return { cidade: g.cidades[Math.min(k, g.cidades.length - 1)], minimo: g.minimo };
+    }
+  }
+  return null;
+}
 
 /* Descobre a região pelo CEP (8 dígitos). Retorna a chave de REGIOES ou null. */
 function regiaoPorCep(cep) {
