@@ -197,6 +197,137 @@ var NATAL = (function () {
     }
   };
 
+  // ---------- Brindes: ímãs com arte pronta (sem foto), 0–100 = frente do ímã ----------
+  var CREME = '#F6E7C8', OURO = '#E9C46A';
+  var anoNovo = (function () { var d = new Date(); return d.getFullYear() + (d.getMonth() >= 6 ? 1 : 0); })();
+  function sino(x, y, ang, s) {
+    return '<g transform="translate(' + x + ' ' + y + ') rotate(' + ang + ') scale(' + s + ')">' +
+      '<path d="M0,-13 Q-10,-13 -11,3 L-14,10 L14,10 L11,3 Q10,-13 0,-13Z" fill="#E0A72E"/>' +
+      '<path d="M-6,-8 Q-8,0 -9,6" stroke="#F8DE8E" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+      '<rect x="-14.5" y="8.5" width="29" height="3" rx="1.5" fill="#B8851F"/>' +
+      '<circle cx="0" cy="13.5" r="3" fill="#B8851F"/></g>';
+  }
+  function fogos(x, y, r, cor) {
+    var s = '<g stroke="' + cor + '" stroke-width="1" stroke-linecap="round">';
+    for (var i = 0; i < 12; i++) {
+      var a = i * Math.PI / 6;
+      s += '<path d="M' + n(x + Math.cos(a) * r * .35) + ' ' + n(y + Math.sin(a) * r * .35) + ' L' + n(x + Math.cos(a) * r) + ' ' + n(y + Math.sin(a) * r) + '"/>';
+    }
+    return s + '</g>' + '<circle cx="' + x + '" cy="' + y + '" r="' + n(r * .12) + '" fill="' + cor + '"/>';
+  }
+  function pontosNeve(cor, seed) {
+    var s = '', v = seed || 7;
+    for (var i = 0; i < 26; i++) {
+      v = (v * 9301 + 49297) % 233280;
+      var x = -6 + (v / 233280) * 112; v = (v * 9301 + 49297) % 233280;
+      var y = -6 + (v / 233280) * 112; v = (v * 9301 + 49297) % 233280;
+      s += '<circle cx="' + n(x) + '" cy="' + n(y) + '" r="' + n(.6 + (v / 233280) * 1.1) + '" fill="' + cor + '" opacity=".85"/>';
+    }
+    return s;
+  }
+
+  var ESTAMPAS = {
+    natalVermelho: {
+      nome: 'Feliz Natal (vermelho)',
+      arte: bg('#7E0F16') + '<circle cx="50" cy="50" r="55" fill="#9B1720" opacity=".55"/>' +
+        galho(-6, 2, 12, 30, 1.1) + galho(2, -6, 78, 26, 1.1) + galho(-4, -2, 45, 24, 1.1, '#2C7A4B') + galho(-6, 14, 2, 20, 1) +
+        azevinho(9, 9, 45, 1.15) + baga(20, 6, 1.6) + baga(6, 20, 1.6) +
+        galho(106, 98, 192, 30, 1.1) + galho(98, 106, 258, 26, 1.1) + galho(104, 102, 225, 24, 1.1, '#2C7A4B') + galho(106, 86, 182, 20, 1) +
+        azevinho(91, 91, 225, 1.15) + baga(80, 94, 1.6) + baga(94, 80, 1.6) +
+        estrela(84, 14, 2.4, OURO) + estrela(15, 84, 2, OURO) + brilho(76, 24, 1.8, OURO) + brilho(24, 76, 1.8, OURO) + estrela(10, 46, 1.4, OURO),
+      textos: [{ fixo: 'Feliz', x: 50, y: 47, size: 25, font: 'script', fill: CREME }, { fixo: 'Natal', x: 52, y: 73, size: 25, font: 'script', fill: CREME }]
+    },
+    natalVerde: {
+      nome: 'Feliz Natal (verde e dourado)',
+      arte: bg('#123D2C') + '<rect x="5" y="5" width="90" height="90" rx="6" fill="none" stroke="' + OURO + '" stroke-width=".9"/>' +
+        '<rect x="7.5" y="7.5" width="85" height="85" rx="4.5" fill="none" stroke="' + OURO + '" stroke-width=".35"/>' +
+        laco(50, 12, .85) + estrela(18, 26, 1.8, OURO) + estrela(82, 26, 1.8, OURO) + brilho(16, 80, 2, OURO) + brilho(84, 80, 2, OURO) +
+        azevinho(50, 86, 0, .8),
+      textos: [{ fixo: 'Feliz', x: 50, y: 50, size: 22, font: 'script', fill: OURO }, { fixo: 'Natal', x: 51, y: 72, size: 22, font: 'script', fill: OURO }]
+    },
+    papaiNoel: {
+      nome: 'Papai Noel',
+      arte: bg('#1F6B45') + pontosNeve('#fff', 11) +
+        // barba e rosto
+        '<path d="M28,50 Q25,82 50,88 Q75,82 72,50 Q62,60 50,60 Q38,60 28,50Z" fill="#fff"/>' +
+        '<circle cx="50" cy="50" r="15" fill="#F6CBA8"/>' +
+        '<path d="M28,50 Q25,82 50,88 Q75,82 72,50 Q66,66 50,67 Q34,66 28,50Z" fill="#fff"/>' +
+        '<circle cx="42" cy="55" r="3.2" fill="#F29C9C" opacity=".7"/><circle cx="58" cy="55" r="3.2" fill="#F29C9C" opacity=".7"/>' +
+        '<ellipse cx="44" cy="49" rx="1.5" ry="1.9" fill="#2B1B14"/><ellipse cx="56" cy="49" rx="1.5" ry="1.9" fill="#2B1B14"/>' +
+        '<path d="M41,45 Q44,43.5 47,45" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M53,45 Q56,43.5 59,45" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+        '<ellipse cx="44.5" cy="61" rx="6.5" ry="3.3" fill="#fff"/><ellipse cx="55.5" cy="61" rx="6.5" ry="3.3" fill="#fff"/>' +
+        '<circle cx="50" cy="56.5" r="2.8" fill="#E8907C"/>' +
+        '<path d="M46,66 Q50,69 54,66" stroke="#C26060" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+        // gorro
+        '<path d="M32,41 Q34,17 55,14 Q73,13 82,30 L76,35 Q69,26 62,28 Q68,36 68,41Z" fill="#C8102E"/>' +
+        '<path d="M55,14 Q73,13 82,30 L78,32 Q70,20 56,19Z" fill="#9E0B22"/>' +
+        '<rect x="29" y="37" width="42" height="9" rx="4.5" fill="#fff"/>' +
+        '<circle cx="80" cy="33" r="5.5" fill="#fff"/>',
+      textos: [{ fixo: 'Ho Ho Ho!', x: 50, y: 97, size: 11, font: 'script', fill: '#fff' }]
+    },
+    meninoJesus: {
+      nome: 'Nascimento do Menino Jesus',
+      arte: bg('#0F1E3D') + pontosNeve('#DCE8FF', 3) +
+        '<ellipse cx="50" cy="66" rx="34" ry="20" fill="#F3D98B" opacity=".22"/>' +
+        // estrela de Belém
+        '<g stroke="#F8E3A3" stroke-width=".7" stroke-linecap="round" opacity=".9"><path d="M50,4 L50,34"/><path d="M38,14 L62,14"/><path d="M42,7 L58,21"/><path d="M58,7 L42,21"/></g>' +
+        '<circle cx="50" cy="14" r="5" fill="#F8E3A3" opacity=".35"/>' + estrela(50, 14, 5.5, '#FFF3C4') +
+        // estábulo
+        '<path d="M16,54 L50,33 L84,54 L80,56 L50,38 L20,56Z" fill="#081226"/>' +
+        '<rect x="22" y="54" width="2.4" height="28" fill="#081226"/><rect x="75.6" y="54" width="2.4" height="28" fill="#081226"/>' +
+        // Maria (ajoelhada) e José (de pé com cajado)
+        '<circle cx="36" cy="61" r="3.6" fill="#081226"/><path d="M32.6,61 Q30,74 27,82 L44,82 Q41,72 39.4,62Z" fill="#081226"/>' +
+        '<circle cx="66" cy="55" r="3.7" fill="#081226"/><path d="M61.5,58 L58.5,82 L73.5,82 L70.5,58Z" fill="#081226"/>' +
+        '<path d="M75.5,48 Q78,47 77.5,50 L77.5,82" stroke="#081226" stroke-width="1.4" fill="none"/>' +
+        // manjedoura com o menino
+        '<circle cx="50" cy="71" r="6" fill="#F8E3A3" opacity=".35"/>' +
+        '<ellipse cx="50" cy="73" rx="6.2" ry="2.6" fill="' + CREME + '"/><circle cx="55" cy="72.2" r="2" fill="#F6CBA8"/>' +
+        '<path d="M42,75 L58,75 L55,82 L45,82Z" fill="#5B3A1E"/>' +
+        '<rect x="-6" y="82" width="112" height="30" fill="#081226"/>',
+      textos: [{ fixo: 'Nasceu Jesus', x: 50, y: 95, size: 11, font: 'script', fill: '#F8E3A3' }]
+    },
+    arvore: {
+      nome: 'Árvore de Natal',
+      arte: bg('#FFF6EA') + pontosNeve('#E9C46A', 5) +
+        '<path d="M50,15 L33,40 L41,40 L27,58 L37,58 L22,76 L78,76 L63,58 L73,58 L59,40 L67,40Z" fill="#1E6B3A"/>' +
+        '<path d="M50,15 L67,40 L59,40 L73,58 L63,58 L78,76 L50,76Z" fill="#17573A"/>' +
+        '<path d="M37,42 Q50,49 63,40" stroke="#E0A72E" stroke-width="1.2" fill="none"/>' +
+        '<path d="M31,60 Q50,68 69,58" stroke="#E0A72E" stroke-width="1.2" fill="none"/>' +
+        '<rect x="46" y="76" width="8" height="6" fill="#7A4A23"/>' +
+        bola(44, 34, 2, '#C8102E') + bola(57, 48, 2.2, '#2E6FB7') + bola(40, 53, 2.2, '#E0A72E') + bola(62, 66, 2.4, '#C8102E') + bola(36, 70, 2.3, '#2E6FB7') + bola(52, 63, 2, '#E0A72E') +
+        estrela(50, 13, 5.5, '#E0A72E') +
+        '<rect x="26" y="77" width="12" height="9" rx="1" fill="#C8102E"/><rect x="31" y="77" width="2" height="9" fill="#F3D98B"/>' +
+        '<rect x="62" y="78" width="11" height="8" rx="1" fill="#2E6FB7"/><rect x="66.5" y="78" width="2" height="8" fill="#F3D98B"/>',
+      textos: [{ fixo: 'Feliz Natal', x: 50, y: 96, size: 10, font: 'script', fill: '#B3122E' }]
+    },
+    boneco: {
+      nome: 'Boneco de neve',
+      arte: bg('#CFE6F5') + [[12, 14, 3], [86, 12, 2.6], [10, 52, 2], [90, 48, 2.4], [16, 84, 2], [86, 84, 2.4]].map(function (p) { return floco(p[0], p[1], p[2], '#fff'); }).join('') +
+        '<path d="M-6,82 Q30,74 50,80 Q74,86 106,76 L106,106 L-6,106Z" fill="#fff"/>' +
+        '<circle cx="50" cy="70" r="15" fill="#fff" stroke="#BCD6EA" stroke-width=".6"/>' +
+        '<circle cx="50" cy="45" r="11" fill="#fff" stroke="#BCD6EA" stroke-width=".6"/>' +
+        '<rect x="38" y="53" width="24" height="5" rx="2.5" fill="#C8102E"/><path d="M56,56 L60,68 L64,66 L60,56Z" fill="#C8102E"/>' +
+        '<rect x="41" y="31" width="18" height="3" rx="1" fill="#1F1A1C"/><rect x="44" y="18" width="12" height="14" rx="1" fill="#1F1A1C"/><rect x="44" y="28" width="12" height="2.4" fill="#C8102E"/>' +
+        '<circle cx="46" cy="43" r="1.3" fill="#1F1A1C"/><circle cx="54" cy="43" r="1.3" fill="#1F1A1C"/>' +
+        '<path d="M50,46 L58,48 L50,48.6Z" fill="#F08A24"/>' +
+        '<circle cx="50" cy="65" r="1.4" fill="#1F1A1C"/><circle cx="50" cy="71" r="1.4" fill="#1F1A1C"/><circle cx="50" cy="77" r="1.4" fill="#1F1A1C"/>' +
+        '<path d="M36,64 L24,56" stroke="#7A4A23" stroke-width="1.2" stroke-linecap="round"/><path d="M64,64 L76,56" stroke="#7A4A23" stroke-width="1.2" stroke-linecap="round"/>',
+      textos: [{ fixo: 'Boas Festas', x: 50, y: 96, size: 10, font: 'script', fill: '#14284A' }]
+    },
+    sinos: {
+      nome: 'Sinos "Boas Festas"',
+      arte: bg('#123D2C') + estrela(16, 16, 2, OURO) + estrela(84, 18, 2.2, OURO) + brilho(14, 64, 1.8, OURO) + brilho(86, 62, 1.8, OURO) +
+        sino(41, 44, -16, 1.15) + sino(59, 44, 16, 1.15) + laco(50, 29, .8) + folha(44, 30, 200, .9) + folha(56, 30, -20, .9),
+      textos: [{ fixo: 'Boas Festas', x: 50, y: 86, size: 15, font: 'script', fill: OURO }]
+    },
+    anoNovo: {
+      nome: 'Feliz Ano Novo',
+      arte: bg('#0E1630') + fogos(22, 22, 13, OURO) + fogos(80, 18, 10, '#F29CBB') + fogos(84, 80, 9, OURO) + fogos(16, 82, 8, '#9ED0FF') +
+        estrela(50, 10, 1.6, OURO) + estrela(64, 90, 1.4, OURO) + brilho(36, 90, 1.6, '#fff'),
+      textos: [{ fixo: 'Feliz', x: 50, y: 46, size: 19, font: 'script', fill: OURO }, { fixo: String(anoNovo), x: 50, y: 70, size: 19, font: 'serif', fill: '#fff' }]
+    }
+  };
+
   var FONTES = { script: '"Great Vibes", cursive', serif: '"Lora", Georgia, serif', sans: '"DM Sans", sans-serif' };
 
   // divide o texto em linhas de no máximo "max" letras
@@ -213,7 +344,7 @@ var NATAL = (function () {
   function textos(modelo, valores) {
     var out = [];
     (modelo.textos || []).forEach(function (t) {
-      var v = (valores[t.campo] || '').trim();
+      var v = (t.fixo !== undefined ? t.fixo : (valores[t.campo] || '')).trim();
       if (!v) return;
       if (t.linha !== undefined) {
         var partes = v.split(/\s+/), corte = Math.ceil(partes.length / 2);
@@ -228,5 +359,5 @@ var NATAL = (function () {
     return out;
   }
 
-  return { MOLDURAS: MOLDURAS, CARTOES: CARTOES, FONTES: FONTES, textos: textos };
+  return { MOLDURAS: MOLDURAS, CARTOES: CARTOES, ESTAMPAS: ESTAMPAS, FONTES: FONTES, textos: textos };
 })();

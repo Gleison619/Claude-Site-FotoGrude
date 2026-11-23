@@ -79,6 +79,16 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 .regua i::before,.regua i::after{content:"";position:absolute;top:-1mm;height:2mm;border-left:0.3mm solid #7A8489}
 .regua i::before{left:0}.regua i::after{right:0}
 
+/* Galeria de brindes */
+.galeria{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.galeria button{padding:0;border:2px solid transparent;border-radius:12px;background:none;cursor:pointer;aspect-ratio:1/1;overflow:hidden;min-height:44px}
+.galeria button svg{display:block;width:100%;height:100%;border-radius:10px}
+.galeria button[aria-checked="true"]{border-color:var(--accent);box-shadow:0 0 0 2px #fff inset}
+.galeria-acoes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.galeria-acoes .btn{min-height:42px;font-size:14px;padding:8px 10px}
+.galeria-acoes .btn-sortida{grid-column:1 / 3}
+.cell.tem-arte{cursor:pointer;background:#fff}
+
 /* Cartão */
 .cartao{position:absolute;overflow:hidden}
 .cartao svg{display:block;width:100%;height:100%}
@@ -150,6 +160,17 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       </fieldset>
 
       <fieldset>
+        <legend>Brindes de Natal (arte pronta, sem foto)</legend>
+        <div class="galeria" id="galeria" role="radiogroup" aria-label="Arte do brinde"></div>
+        <p class="dica" id="galeria-nome"></p>
+        <div class="galeria-acoes">
+          <button type="button" class="btn" id="brinde-1">Adicionar 1</button>
+          <button type="button" class="btn" id="brinde-folha">Completar a folha</button>
+          <button type="button" class="btn btn-sortida" id="brinde-sortida">Folha sortida (todas as artes)</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
         <legend>Medidas (mm)</legend>
         <label class="campo"><span>Ímã pronto<small>o que aparece na frente</small></span><input type="number" id="final" min="20" max="120" step="0.5"></label>
         <label class="campo"><span>Papel cortado<small>tamanho do corte da sua máquina</small></span><input type="number" id="corte" min="20" max="140" step="0.5"></label>
@@ -206,10 +227,10 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     <div class="editor" id="editor" hidden>
       <div class="editor-topo"><h2 id="editor-titulo">Foto selecionada</h2><button type="button" class="fechar" id="fechar-editor" aria-label="Fechar ajuste da foto">×</button></div>
       <div class="preview" id="preview" aria-label="Quadro de ajuste: arraste para enquadrar, use dois dedos para zoom"></div>
-      <label class="zoom" for="zoom">Zoom <input type="range" id="zoom" min="20" max="400" value="100"><output id="zoom-valor">100%</output></label>
-      <p class="dica">Arraste a foto no quadro acima (ou direto na folha) para qualquer lado. Com dois dedos, afaste ou aproxime para dar zoom. Abaixo de 100% a foto inteira cabe e o espaço que sobrar sai em branco. A parte fora da linha tracejada dobra para trás.</p>
+      <label class="zoom so-foto" for="zoom">Zoom <input type="range" id="zoom" min="20" max="400" value="100"><output id="zoom-valor">100%</output></label>
+      <p class="dica so-foto">Arraste a foto no quadro acima (ou direto na folha) para qualquer lado. Com dois dedos, afaste ou aproxime para dar zoom. Abaixo de 100% a foto inteira cabe e o espaço que sobrar sai em branco. A parte fora da linha tracejada dobra para trás.</p>
       <div class="linha">
-        <button type="button" class="btn" id="centralizar">Centralizar</button>
+        <button type="button" class="btn so-foto" id="centralizar">Centralizar</button>
         <label class="btn btn-file">Trocar<input type="file" id="trocar" accept="image/*" aria-label="Trocar a foto selecionada"></label>
         <button type="button" class="btn" id="repetir">Repetir na folha</button>
         <button type="button" class="btn" id="remover">Remover</button>
@@ -310,6 +331,12 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 
   // Monta o ímã (moldura + foto) dentro de "el". Devolve o <img> da foto (ou null).
   function montarIma(el, f, c) {
+    if (f && f.arte) {
+      // brinde: arte pronta ocupando o papel inteiro (inclui a parte que dobra)
+      var E = NATAL.ESTAMPAS[f.arte];
+      el.appendChild(svgCamada(c.viewBox, E.arte, NATAL.textos(E, {})));
+      return null;
+    }
     if (c.temMoldura) el.appendChild(svgCamada(c.viewBox, c.mold.fundo));
     var jan = document.createElement('div'); jan.className = 'janela';
     jan.style.left = c.jan.x + '%'; jan.style.top = c.jan.y + '%'; jan.style.width = c.jan.w + '%'; jan.style.height = c.jan.h + '%';
@@ -358,7 +385,8 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
         cell.setAttribute('role', 'button'); cell.tabIndex = 0;
         var f = fotos[idx];
         montarIma(cell, f, c);
-        if (f) { cell.classList.add('tem-foto'); cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': selecionar para ajustar'); }
+        if (f && f.arte) { cell.classList.add('tem-arte'); cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': brinde ' + NATAL.ESTAMPAS[f.arte].nome); }
+        else if (f) { cell.classList.add('tem-foto'); cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': selecionar para ajustar'); }
         else { cell.classList.add('vazia'); cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': adicionar foto'); }
         if (c.gCorte) { var gc = document.createElement('span'); gc.className = 'guia-corte'; gc.style.borderRadius = 'inherit'; cell.appendChild(gc); }
         if (c.gFinal && c.corte > c.final) {
@@ -449,7 +477,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     cell.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clique(idx); } });
     var ini = null, moveu = false;
     cell.addEventListener('pointerdown', function (e) {
-      if (!fotos[idx]) return;
+      if (!fotos[idx] || fotos[idx].arte) return;
       // no toque, o primeiro toque só seleciona; arrastar vale para a foto já selecionada
       if (e.pointerType !== 'mouse' && sel !== idx) return;
       ini = { x: e.clientX, y: e.clientY, dx: fotos[idx].dx, dy: fotos[idx].dy };
@@ -490,9 +518,12 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     var f = modo === 'imas' ? fotos[sel] : null;
     $('editor').hidden = !f;
     if (!f) return;
-    $('editor-titulo').textContent = 'Ímã ' + (sel + 1);
-    $('zoom').value = Math.round(f.zoom * 100);
-    $('zoom-valor').textContent = Math.round(f.zoom * 100) + '%';
+    $('editor-titulo').textContent = 'Ímã ' + (sel + 1) + (f.arte ? ': ' + NATAL.ESTAMPAS[f.arte].nome : '');
+    document.querySelectorAll('.so-foto').forEach(function (el) { el.hidden = !!f.arte; });
+    if (!f.arte) {
+      $('zoom').value = Math.round(f.zoom * 100);
+      $('zoom-valor').textContent = Math.round(f.zoom * 100) + '%';
+    }
     atualizarPreview();
   }
 
@@ -547,7 +578,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     var f = fotos[sel]; if (!f) return;
     var c = cfg(), p = Math.floor(sel / c.porFolha);
     for (var i = p * c.porFolha; i < (p + 1) * c.porFolha; i++) {
-      if (!fotos[i]) fotos[i] = { url: f.url, w: f.w, h: f.h, zoom: f.zoom, dx: f.dx, dy: f.dy };
+      if (!fotos[i]) fotos[i] = f.arte ? { arte: f.arte } : { url: f.url, w: f.w, h: f.h, zoom: f.zoom, dx: f.dx, dy: f.dy };
     }
     render();
   });
@@ -557,7 +588,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
   $('limpar').addEventListener('click', function () {
     if (!fotos.filter(Boolean).length) return;
     if (!confirm('Remover todas as fotos do gabarito?')) return;
-    var urls = {}; fotos.forEach(function (f) { if (f) urls[f.url] = 1; });
+    var urls = {}; fotos.forEach(function (f) { if (f && f.url) urls[f.url] = 1; });
     Object.keys(urls).forEach(function (u) { URL.revokeObjectURL(u); });
     fotos = []; sel = -1; render();
   });
@@ -645,9 +676,10 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     var c = cfg(); if (!c.porFolha) return;
     var W = c.papel[0], H = c.papel[1], S = Math.round(c.corte * DPMM);
     var nFolhas = Math.max(1, Math.ceil(fotos.length / c.porFolha));
-    var urls = {}; fotos.forEach(function (f) { if (f) urls[f.url] = 1; });
-    var imgs = {};
-    return Promise.all(Object.keys(urls).map(function (u) { return carregarImg(u).then(function (im) { imgs[u] = im; }); }))
+    var urls = {}, artes = {}; fotos.forEach(function (f) { if (f && f.url) urls[f.url] = 1; if (f && f.arte) artes[f.arte] = 1; });
+    var imgs = {}, artesImg = {};
+    return Promise.all(Object.keys(urls).map(function (u) { return carregarImg(u).then(function (im) { imgs[u] = im; }); })
+      .concat(Object.keys(artes).map(function (a) { return svgImg(c.viewBox, NATAL.ESTAMPAS[a].arte, S, S).then(function (im) { artesImg[a] = im; }); })))
       .then(function () {
         return c.temMoldura ? Promise.all([svgImg(c.viewBox, c.mold.fundo, S, S), svgImg(c.viewBox, c.mold.frente, S, S)]) : [null, null];
       })
@@ -667,6 +699,15 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
         var cx = (c.x0 + col * (c.corte + c.espaco)) * DPMM, cy = (c.y0 + row * (c.corte + c.espaco)) * DPMM, L = c.corte * DPMM;
         var raio = c.raioCelula * DPMM;
         x.save(); caminho(x, cx, cy, L, L, raio); x.clip();
+        if (f.arte) {
+          // brinde: arte pronta + textos
+          var E = NATAL.ESTAMPAS[f.arte];
+          if (artesImg[f.arte]) x.drawImage(artesImg[f.arte], cx, cy, L, L);
+          NATAL.textos(E, {}).forEach(function (t) { textoCanvas(x, t, cx + ox + t.x * k, cy + ox + t.y * k, k); });
+          x.restore();
+          if (c.gCorte) { x.save(); x.strokeStyle = '#9AA4AA'; x.lineWidth = 0.25 * DPMM; caminho(x, cx, cy, L, L, raio); x.stroke(); x.restore(); }
+          continue;
+        }
         if (fundo) x.drawImage(fundo, cx, cy, L, L);
         // janela da foto
         var jx = cx + c.jan.x / 100 * L, jy = cy + c.jan.y / 100 * L, jw = c.jan.w / 100 * L, jh = c.jan.h / 100 * L;
@@ -791,6 +832,49 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       mudou(f);
     }, { passive: false });
   })();
+
+  // ---------- Galeria de brindes (arte pronta, sem foto) ----------
+  var estampa = Object.keys(NATAL.ESTAMPAS)[0];
+  (function () {
+    var gal = $('galeria');
+    Object.keys(NATAL.ESTAMPAS).forEach(function (k) {
+      var E = NATAL.ESTAMPAS[k];
+      var b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('role', 'radio'); b.dataset.k = k;
+      b.setAttribute('aria-label', E.nome); b.title = E.nome;
+      var s = svgCamada('0 0 100 100', E.arte, NATAL.textos(E, {}));
+      s.setAttribute('class', ''); s.removeAttribute('preserveAspectRatio');
+      b.appendChild(s);
+      b.addEventListener('click', function () { escolherEstampa(k); });
+      gal.appendChild(b);
+    });
+    escolherEstampa(estampa);
+  })();
+  function escolherEstampa(k) {
+    estampa = k;
+    document.querySelectorAll('#galeria button').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.k === k)); });
+    $('galeria-nome').textContent = 'Arte escolhida: ' + NATAL.ESTAMPAS[k].nome + '.';
+  }
+  function vagas() {
+    // espaços livres até o fim da última folha (ou da primeira, se estiver vazia)
+    var c = cfg(), total = Math.max(1, Math.ceil(fotos.length / c.porFolha)) * c.porFolha, livres = [];
+    for (var i = 0; i < total; i++) if (!fotos[i]) livres.push(i);
+    return livres;
+  }
+  $('brinde-1').addEventListener('click', function () {
+    var i = 0; while (fotos[i]) i++;
+    fotos[i] = { arte: estampa }; render();
+  });
+  $('brinde-folha').addEventListener('click', function () {
+    var livres = vagas();
+    if (!livres.length) { var c = cfg(); livres = []; for (var j = fotos.length; j < fotos.length + c.porFolha; j++) livres.push(j); }
+    livres.forEach(function (i) { fotos[i] = { arte: estampa }; }); render();
+  });
+  $('brinde-sortida').addEventListener('click', function () {
+    var chaves = Object.keys(NATAL.ESTAMPAS), livres = vagas();
+    if (!livres.length) { var c = cfg(); for (var j = fotos.length; j < fotos.length + c.porFolha; j++) livres.push(j); }
+    livres.forEach(function (i, n) { fotos[i] = { arte: chaves[n % chaves.length] }; }); render();
+  });
 
   $('fechar-editor').addEventListener('click', function () { sel = -1; marcar(); editor(); });
   if (window.matchMedia && matchMedia('(pointer:fine)').matches) document.documentElement.classList.add('mouse');
