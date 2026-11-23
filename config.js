@@ -14,7 +14,7 @@ var LOJA = {
   // Link do Mercado Pago de VALOR LIVRE (o cliente digita o total).
   // Serve para todos os kits e qualquer quantidade. Se preenchido, é usado
   // quando não houver um link específico do kit abaixo.
-  mercadoPagoValorLivre: "https://link.mercadopago.com.br/fotogrudebuytoday99",
+  mercadoPagoValorLivre: "https://link.mercadopago.com.br/fotogrude99",
 
   // Links de pagamento do Mercado Pago com valor fixo, um por opção (opcional)
   linksCartao: {
