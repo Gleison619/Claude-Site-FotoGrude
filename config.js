@@ -42,19 +42,40 @@ var PROMO = {
   link: "#pacotes"
 };
 
-/* Frete por região (em centavos). Enquanto algum valor for null,
-   a calculadora de frete NÃO aparece e o frete segue pelo WhatsApp.
-   Ex.: sudeste: 1500 = R$ 15,00. "prazo" é opcional (texto). */
-var FRETE = {
-  mg:          { nome: "Minas Gerais",  valor: null, prazo: "" },
-  sudeste:     { nome: "Sudeste",       valor: null, prazo: "" },
-  sul:         { nome: "Sul",           valor: null, prazo: "" },
-  centroOeste: { nome: "Centro-Oeste",  valor: null, prazo: "" },
-  nordeste:    { nome: "Nordeste",      valor: null, prazo: "" },
-  norte:       { nome: "Norte",         valor: null, prazo: "" }
+/* Formas de entrega que o cliente escolhe na página de pedido.
+   - ativo: false esconde a opção.
+   - Correios (tipo "regiao"): valor em CENTAVOS por região do CEP de destino.
+     Ex.: sudeste: 1590 = R$ 15,90. Enquanto algum valor da opção for null,
+     ela NÃO aparece para o cliente.
+   - "prazo" é um texto opcional, ex.: "5 a 9 dias úteis após a produção". */
+var REGIOES = {
+  mg: "Minas Gerais", sudeste: "Sudeste (SP, RJ, ES)", sul: "Sul",
+  centroOeste: "Centro-Oeste", nordeste: "Nordeste", norte: "Norte"
+};
+var ENVIO = {
+  carta: {
+    nome: "Carta registrada (Correios)", tipo: "regiao", ativo: true, prazo: "",
+    valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
+  },
+  pac: {
+    nome: "PAC (Correios)", tipo: "regiao", ativo: true, prazo: "",
+    valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
+  },
+  sedex: {
+    nome: "SEDEX (Correios)", tipo: "regiao", ativo: true, prazo: "",
+    valores: { mg: null, sudeste: null, sul: null, centroOeste: null, nordeste: null, norte: null }
+  },
+  particular: {
+    nome: "Entrega particular", tipo: "combinar", ativo: true,
+    prazo: "Valor e dia combinados pelo WhatsApp"
+  },
+  retirar: {
+    nome: "Retirar em mãos", tipo: "gratis", ativo: true,
+    prazo: "Sem frete. Combinamos o local e o horário pelo WhatsApp"
+  }
 };
 
-/* Descobre a região pelo CEP (8 dígitos). Retorna a chave de FRETE ou null. */
+/* Descobre a região pelo CEP (8 dígitos). Retorna a chave de REGIOES ou null. */
 function regiaoPorCep(cep) {
   var d = String(cep || "").replace(/\D/g, "");
   if (d.length !== 8) return null;
@@ -69,9 +90,15 @@ function regiaoPorCep(cep) {
   if (p2 >= 80) return "sul";                           // PR, SC, RS
   return null;
 }
-function freteAtivo() {
-  for (var k in FRETE) { if (FRETE[k].valor === null || FRETE[k].valor === undefined) return false; }
-  return true;
+/* Opções de entrega prontas para mostrar (Correios só com todos os valores preenchidos). */
+function opcoesEnvio() {
+  return Object.keys(ENVIO).filter(function (k) {
+    var o = ENVIO[k];
+    if (!o.ativo) return false;
+    if (o.tipo !== "regiao") return true;
+    for (var r in REGIOES) { if (o.valores[r] === null || o.valores[r] === undefined) return false; }
+    return true;
+  });
 }
 
 /* Avaliações de clientes (só aparecem no site quando houver pelo menos uma).
