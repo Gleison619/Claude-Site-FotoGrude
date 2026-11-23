@@ -11,7 +11,8 @@
 <link rel="apple-touch-icon" href="icone-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&family=Great+Vibes&family=Lora:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<script src="natal.js"></script>
 <style>
 :root{--accent:#A21F52;--ink:#1F1A1C;--muted:#5A5256;--bg:#EEF1F3;--line:#D9DEE1;--pink:#FCE3EC;--gold:#F5C04A}
 *{box-sizing:border-box}
@@ -23,11 +24,17 @@ button,input,select{font:inherit}
 aside{background:#fff;border-right:1px solid var(--line);padding:22px 20px 40px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh;overflow-y:auto}
 h1{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;margin:0;letter-spacing:-.02em}
 .sub{margin:4px 0 0;font-size:14px;color:var(--muted);line-height:1.45}
+.painel{display:flex;flex-direction:column;gap:20px}
+.painel[hidden]{display:none}
+.abas{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border-radius:999px;padding:4px;gap:4px}
+.abas button{min-height:42px;border:0;border-radius:999px;background:transparent;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
+.abas button[aria-selected="true"]{background:var(--accent);color:#fff}
 fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 legend{font-weight:700;font-size:15px;margin-bottom:8px;padding:0}
 label.campo{display:grid;grid-template-columns:1fr 92px;align-items:center;gap:10px;font-size:14px}
 label.campo span small{display:block;color:var(--muted);font-size:12px}
-input[type=number],select{width:100%;min-height:40px;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff}
+label.texto{display:flex;flex-direction:column;gap:4px;font-size:14px}
+input[type=number],input[type=text],select{width:100%;min-height:40px;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff}
 select{min-height:44px}
 .check{display:flex;gap:10px;align-items:center;font-size:14px;min-height:32px}
 .check input{width:18px;height:18px;accent-color:var(--accent)}
@@ -43,49 +50,56 @@ select{min-height:44px}
 .editor{border:1.5px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .editor[hidden]{display:none}
 .editor h2{font-size:15px;margin:0}
-.editor .linha{display:flex;gap:8px;flex-wrap:wrap}
 .editor .linha{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .editor .linha .btn{min-height:44px;font-size:14px;padding:8px 12px}
 .zoom{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700}
 .zoom input{flex:1;accent-color:var(--accent);min-height:36px}
+.zoom output{min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
 
 main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px;overflow:auto}
 .folha-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
 .folha-titulo{font-size:13px;font-weight:700;color:var(--muted)}
 .sheet{position:relative;background:#fff;box-shadow:0 10px 30px rgba(31,26,28,.15);flex:none}
+
+/* Ímã: célula = papel cortado; .janela = onde a foto aparece; .camada = desenho da moldura */
 .cell{position:absolute;overflow:hidden;background:#F4F6F7;cursor:pointer}
-/* No toque, só a foto selecionada arrasta; as outras deixam a página rolar */
-.cell.sel,.mouse .cell.tem-foto{touch-action:none}
-.cell.vazia{display:flex;align-items:center;justify-content:center;color:#A9B3B9;font-size:7mm;font-weight:700}
-.cell img{position:absolute;max-width:none;pointer-events:none;user-select:none}
-.cell.sel{outline:2.5px solid var(--accent);outline-offset:1px;z-index:2}
 .cell.tem-foto{cursor:grab;background:#fff}
-.zoom output{min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
-/* Quadro grande de ajuste (arrastar com um dedo, zoom com dois) */
-.preview{position:relative;width:min(240px,62vw);aspect-ratio:1/1;margin:2px auto 0;overflow:hidden;background:#fff;border:1px solid #9AA4AA;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
-.preview:active{cursor:grabbing}
-.preview img{position:absolute;max-width:none;pointer-events:none;-webkit-user-drag:none}
-.prev-final{position:absolute;border:2px dashed #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 0 0 999px rgba(31,26,28,.28);pointer-events:none}
 .cell.tem-foto:active{cursor:grabbing}
-.guia-corte{position:absolute;inset:0;border:0.25mm solid #9AA4AA;pointer-events:none;z-index:1}
-.guia-final{position:absolute;border:0.25mm dashed rgba(255,255,255,.95);box-shadow:0 0 0 0.2mm rgba(0,0,0,.35);pointer-events:none;z-index:1}
+.cell.sel,.mouse .cell.tem-foto{touch-action:none}
+.cell.sel{outline:2.5px solid var(--accent);outline-offset:1px;z-index:2}
+.janela{position:absolute;overflow:hidden;background:#fff}
+.vazia .janela{display:flex;align-items:center;justify-content:center;color:#A9B3B9;font-weight:700;background:rgba(255,255,255,.75)}
+.cell:not(.moldura).vazia .janela{background:transparent}
+.janela img{position:absolute;max-width:none;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.camada{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+.guia-corte{position:absolute;inset:0;border:0.25mm solid #9AA4AA;pointer-events:none;z-index:3}
+.guia-final{position:absolute;border:0.25mm dashed rgba(255,255,255,.95);box-shadow:0 0 0 0.2mm rgba(0,0,0,.35);pointer-events:none;z-index:3}
 .regua{position:absolute;display:flex;align-items:center;gap:2mm;font-size:2.4mm;color:#7A8489;pointer-events:none}
 .regua i{display:block;height:0;border-top:0.3mm solid #7A8489;position:relative}
 .regua i::before,.regua i::after{content:"";position:absolute;top:-1mm;height:2mm;border-left:0.3mm solid #7A8489}
 .regua i::before{left:0}.regua i::after{right:0}
 
+/* Cartão */
+.cartao{position:absolute;overflow:hidden}
+.cartao svg{display:block;width:100%;height:100%}
+.cartao .guia-corte{border-radius:0}
+
+/* Quadro grande de ajuste (arrastar com um dedo, zoom com dois) */
+.preview{position:relative;width:min(240px,62vw);aspect-ratio:1/1;margin:2px auto 0;overflow:hidden;background:#fff;border:1px solid #9AA4AA;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.preview:active{cursor:grabbing}
+.prev-final{position:absolute;border:2px dashed #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 0 0 999px rgba(31,26,28,.28);pointer-events:none;z-index:4}
+
+.editor-topo{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.editor .fechar{display:none;width:40px;height:40px;border-radius:999px;border:1.5px solid var(--line);background:#fff;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+
 @media (max-width:860px){
   .app{grid-template-columns:1fr}
   aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
   main{padding:16px 16px 520px;align-items:center}
-  .editor{max-height:78vh;overflow-y:auto}
-  .preview{width:min(220px,58vw)}
-  /* Painel da foto selecionada fica preso embaixo da tela */
-  .editor{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:#fff;z-index:30;box-shadow:0 -6px 30px rgba(31,26,28,.25);max-width:520px;margin:0 auto}
+  .editor{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:#fff;z-index:30;box-shadow:0 -6px 30px rgba(31,26,28,.25);max-width:520px;margin:0 auto;max-height:78vh;overflow-y:auto}
   .editor .fechar.fechar{display:inline-flex}
+  .preview{width:min(220px,58vw)}
 }
-.editor-topo{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.editor .fechar{display:none;width:40px;height:40px;border-radius:999px;border:1.5px solid var(--line);background:#fff;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
 
 /* Impressão: só as folhas, em tamanho real */
 @media print{
@@ -96,12 +110,13 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
   main{padding:0;gap:0;display:block;overflow:visible}
   .folha-wrap{display:block;gap:0}
   .sheet{box-shadow:none;transform:none !important;page-break-after:always;break-after:page;margin:0}
-  .sheet:last-child{page-break-after:auto;break-after:auto}
+  .folha-wrap:last-child .sheet{page-break-after:auto;break-after:auto}
   .cell.sel{outline:none}
   .cell.vazia{background:#fff;color:transparent}
+  .cell.vazia .janela,.cell.vazia .camada{visibility:hidden}
   .guia-final{display:none}
   .sheet.sem-guias-corte .guia-corte{display:none}
-  .cell{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cell,.cartao,.janela{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
@@ -110,53 +125,87 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
   <aside aria-label="Configurações do gabarito">
     <div>
       <h1>Gabarito de ímãs</h1>
-      <p class="sub">Monte a folha com as fotos dos clientes no tamanho certo da sua máquina e imprima em tamanho real.</p>
+      <p class="sub">Monte a folha no tamanho certo da sua máquina e imprima em tamanho real.</p>
+    </div>
+
+    <div class="abas" role="tablist" aria-label="O que montar">
+      <button type="button" role="tab" id="aba-imas" aria-selected="true" aria-controls="painel-imas">Ímãs</button>
+      <button type="button" role="tab" id="aba-cartoes" aria-selected="false" aria-controls="painel-cartoes">Cartões de Natal</button>
+    </div>
+
+    <div class="painel" id="painel-imas" role="tabpanel" aria-labelledby="aba-imas">
+      <fieldset>
+        <legend>Modelo</legend>
+        <select id="modelo" aria-label="Modelo de ímã">
+          <option value="botton">Máquina de botton quadrada 5x5 cm (foto dobra por trás)</option>
+          <option value="manta">Manta magnética 5x5 cm (corte reto, sem dobra)</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Moldura</legend>
+        <select id="moldura" aria-label="Moldura dos ímãs"></select>
+        <label class="texto" id="moldura-texto-campo">Texto da moldura<input type="text" id="moldura-texto" value="Feliz Natal" maxlength="28"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Medidas (mm)</legend>
+        <label class="campo"><span>Ímã pronto<small>o que aparece na frente</small></span><input type="number" id="final" min="20" max="120" step="0.5"></label>
+        <label class="campo"><span>Papel cortado<small>tamanho do corte da sua máquina</small></span><input type="number" id="corte" min="20" max="140" step="0.5"></label>
+        <label class="campo"><span>Cantos arredondados<small>raio do canto (0 = reto)</small></span><input type="number" id="raio" min="0" max="20" step="0.5"></label>
+        <label class="campo"><span>Espaço entre fotos</span><input type="number" id="espaco" min="0" max="20" step="0.5"></label>
+        <label class="campo"><span>Margem da folha<small>a impressora não imprime na borda</small></span><input type="number" id="margem" min="0" max="30" step="0.5"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Guias</legend>
+        <label class="check"><input type="checkbox" id="g-final" checked>Mostrar área visível na tela</label>
+        <label class="check"><input type="checkbox" id="g-regua" checked>Imprimir régua de conferência (5 cm)</label>
+      </fieldset>
+    </div>
+
+    <div class="painel" id="painel-cartoes" role="tabpanel" aria-labelledby="aba-cartoes" hidden>
+      <fieldset>
+        <legend>Modelo do cartão (10 x 14 cm)</legend>
+        <select id="cartao-modelo" aria-label="Modelo do cartão"></select>
+      </fieldset>
+      <fieldset>
+        <legend>Textos do cartão</legend>
+        <label class="texto">Título<input type="text" id="c-titulo" value="Feliz Natal" maxlength="24"></label>
+        <label class="texto">Frase acima do ímã<input type="text" id="c-frase1" value="Um pedacinho do nosso Natal para você." maxlength="48"></label>
+        <label class="texto">Frase abaixo do ímã<input type="text" id="c-frase2" value="Que este Natal seja cheio de amor, luz e boas memórias." maxlength="96"></label>
+        <label class="texto">Assinatura (opcional)<input type="text" id="c-assinatura" value="" maxlength="32" placeholder="Ex.: Com carinho, Família Silva"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Impressão</legend>
+        <label class="campo"><span>Quantidade de cartões</span><input type="number" id="c-qtd" min="1" max="200" step="1" value="4"></label>
+        <label class="check"><input type="checkbox" id="c-vaga" checked>Marcar o lugar do ímã</label>
+        <p class="dica">O lugar do ímã segue a medida "Ímã pronto" da aba Ímãs. Imprima em papel couché ou fotográfico de 180 a 250 g e cole o ímã por cima.</p>
+      </fieldset>
     </div>
 
     <fieldset>
-      <legend>Modelo</legend>
-      <select id="modelo" aria-label="Modelo de ímã">
-        <option value="botton">Máquina de botton quadrada 5x5 cm (foto dobra por trás)</option>
-        <option value="manta">Manta magnética 5x5 cm (corte reto, sem dobra)</option>
-        <option value="custom">Personalizado</option>
-      </select>
-    </fieldset>
-
-    <fieldset>
-      <legend>Medidas (mm)</legend>
-      <label class="campo"><span>Ímã pronto<small>o que aparece na frente</small></span><input type="number" id="final" min="20" max="120" step="0.5"></label>
-      <label class="campo"><span>Papel cortado<small>tamanho do corte da sua máquina</small></span><input type="number" id="corte" min="20" max="140" step="0.5"></label>
-      <label class="campo"><span>Cantos arredondados<small>raio do canto (0 = reto)</small></span><input type="number" id="raio" min="0" max="20" step="0.5"></label>
-      <label class="campo"><span>Espaço entre fotos</span><input type="number" id="espaco" min="0" max="20" step="0.5"></label>
-      <label class="campo"><span>Margem da folha<small>a impressora não imprime na borda</small></span><input type="number" id="margem" min="0" max="30" step="0.5"></label>
+      <legend>Folha</legend>
       <label class="campo"><span>Papel</span>
         <select id="papel"><option value="a4">A4</option><option value="carta">Carta</option><option value="10x15">Foto 10x15</option></select>
       </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>Guias</legend>
       <label class="check"><input type="checkbox" id="g-corte" checked>Imprimir linha de corte</label>
-      <label class="check"><input type="checkbox" id="g-final" checked>Mostrar área visível na tela</label>
-      <label class="check"><input type="checkbox" id="g-regua" checked>Imprimir régua de conferência (5 cm)</label>
     </fieldset>
 
     <div class="resumo" id="resumo" aria-live="polite"></div>
 
     <div class="acoes">
-      <label class="btn btn-accent btn-file">Adicionar fotos<input type="file" id="arquivos" accept="image/*" multiple aria-label="Adicionar fotos ao gabarito"></label>
+      <label class="btn btn-accent btn-file so-imas">Adicionar fotos<input type="file" id="arquivos" accept="image/*" multiple aria-label="Adicionar fotos ao gabarito"></label>
       <button type="button" class="btn" id="imprimir">Imprimir</button>
       <button type="button" class="btn" id="baixar">Baixar imagem 300 dpi</button>
-      <button type="button" class="btn" id="limpar">Limpar fotos</button>
+      <button type="button" class="btn so-imas" id="limpar">Limpar fotos</button>
       <p class="dica">Ao imprimir, escolha <strong>Escala 100%</strong> ou <strong>Tamanho real</strong> (nunca "Ajustar à página"). Depois meça a régua de 5 cm na folha para conferir.</p>
     </div>
 
     <div class="editor" id="editor" hidden>
       <div class="editor-topo"><h2 id="editor-titulo">Foto selecionada</h2><button type="button" class="fechar" id="fechar-editor" aria-label="Fechar ajuste da foto">×</button></div>
-      <div class="preview" id="preview" aria-label="Quadro de ajuste: arraste para enquadrar, use dois dedos para zoom">
-        <img id="prev-img" alt="">
-        <span class="prev-final" id="prev-final" aria-hidden="true"></span>
-      </div>
+      <div class="preview" id="preview" aria-label="Quadro de ajuste: arraste para enquadrar, use dois dedos para zoom"></div>
       <label class="zoom" for="zoom">Zoom <input type="range" id="zoom" min="20" max="400" value="100"><output id="zoom-valor">100%</output></label>
       <p class="dica">Arraste a foto no quadro acima (ou direto na folha) para qualquer lado. Com dois dedos, afaste ou aproxime para dar zoom. Abaixo de 100% a foto inteira cabe e o espaço que sobrar sai em branco. A parte fora da linha tracejada dobra para trás.</p>
       <div class="linha">
@@ -174,19 +223,26 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
 <script>
 (function () {
   'use strict';
+  var SVGNS = 'http://www.w3.org/2000/svg';
   var PAPEIS = { a4: [210, 297], carta: [215.9, 279.4], '10x15': [100, 150] };
   var MODELOS = {
     botton: { final: 50, corte: 58, raio: 3, espaco: 2, margem: 6 },
     manta:  { final: 50, corte: 50, raio: 2, espaco: 3, margem: 6 }
   };
+  var CARTAO = { w: 100, h: 140, espaco: 2, margem: 4 };
   var $ = function (id) { return document.getElementById(id); };
   var campos = ['final', 'corte', 'raio', 'espaco', 'margem'];
-  var fotos = [];          // { url, w, h, zoom, px, py } ou null (espaço vazio)
-  var sel = -1;
+  var fotos = [];          // { url, w, h, zoom, dx, dy } ou null (espaço vazio)
+  var sel = -1, modo = 'imas';
+
+  // Listas de molduras e cartões vindas do natal.js
+  Object.keys(NATAL.MOLDURAS).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = NATAL.MOLDURAS[k].nome; $('moldura').appendChild(o); });
+  Object.keys(NATAL.CARTOES).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = NATAL.CARTOES[k].nome; $('cartao-modelo').appendChild(o); });
 
   function cfg() {
     var c = {};
     campos.forEach(function (k) { c[k] = Math.max(0, parseFloat($(k).value) || 0); });
+    if (c.final < 10) c.final = 10;
     if (c.corte < c.final) c.corte = c.final;
     c.papel = PAPEIS[$('papel').value];
     c.gCorte = $('g-corte').checked; c.gFinal = $('g-final').checked; c.gRegua = $('g-regua').checked;
@@ -199,100 +255,197 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     var rows = c.gRegua ? c.rowsRegua : c.rows;
     c.gridW = c.cols * (S + g) - g; c.gridH = rows * (S + g) - g;
     c.x0 = (W - c.gridW) / 2; c.y0 = c.gRegua ? m : (H - c.gridH) / 2;
+    c.dobra = (c.corte - c.final) / 2;
+    c.mold = NATAL.MOLDURAS[$('moldura').value] || NATAL.MOLDURAS.nenhuma;
+    c.temMoldura = !!c.mold.janela;
+    c.raioCelula = c.raio ? Math.min(c.raio + c.dobra, c.corte / 2) : 0;
+    // janela da foto em % do papel cortado (sem moldura = o quadrado inteiro)
+    if (c.temMoldura) {
+      var J = c.mold.janela, k = c.final / 100 / c.corte * 100, d = c.dobra / c.corte * 100;
+      c.jan = { x: d + J.x * k, y: d + J.y * k, w: J.w * k, h: J.h * k, rx: J.r / J.w * 100, ry: J.r / J.h * 100, aspecto: J.w / J.h };
+    } else {
+      c.jan = { x: 0, y: 0, w: 100, h: 100, rx: 0, ry: 0, aspecto: 1 };
+    }
+    c.textosMoldura = c.temMoldura ? NATAL.textos(c.mold, { texto: $('moldura-texto').value }) : [];
+    var e = c.dobra / c.final * 100;
+    c.viewBox = (-e) + ' ' + (-e) + ' ' + (100 + 2 * e) + ' ' + (100 + 2 * e);
     return c;
   }
 
-  // Posição da foto dentro do quadrado (em % do lado). Zoom 100% = a foto cobre o quadrado.
+  // Posição da foto dentro da janela (em % da janela). Zoom 100% = a foto cobre a janela.
   // dx/dy = deslocamento livre do centro; o que sobrar vazio sai em branco.
-  function caixa(f) {
-    var a = f.w / f.h, z = f.zoom;
-    var w = (a >= 1 ? a : 1) * 100 * z, h = (a >= 1 ? 1 : 1 / a) * 100 * z;
+  function caixa(f, aspecto) {
+    var a = f.w / f.h, z = f.zoom, ja = aspecto || 1, w, h;
+    if (a >= ja) { h = 100 * z; w = a / ja * 100 * z; } else { w = 100 * z; h = ja / a * 100 * z; }
     return { w: w, h: h, l: (100 - w) / 2 + f.dx, t: (100 - h) / 2 + f.dy };
   }
-  // não deixa a foto sair inteira do quadrado (sempre fica um pedaço para pegar)
-  function limitar(f) {
-    var b = caixa(f), mx = (100 + b.w) / 2 - 8, my = (100 + b.h) / 2 - 8;
+  // não deixa a foto sair inteira da janela (sempre fica um pedaço para pegar)
+  function limitar(f, aspecto) {
+    var b = caixa(f, aspecto), mx = (100 + b.w) / 2 - 8, my = (100 + b.h) / 2 - 8;
     f.dx = Math.max(-mx, Math.min(mx, f.dx)); f.dy = Math.max(-my, Math.min(my, f.dy));
   }
-  function aplicarCaixa(im, f) {
-    var b = caixa(f);
+  function aplicarCaixa(im, f, aspecto) {
+    if (!im) return;
+    var b = caixa(f, aspecto);
     im.style.width = b.w + '%'; im.style.height = b.h + '%'; im.style.left = b.l + '%'; im.style.top = b.t + '%';
   }
 
+  function svgCamada(viewBox, html, textos) {
+    var s = document.createElementNS(SVGNS, 'svg');
+    s.setAttribute('class', 'camada'); s.setAttribute('viewBox', viewBox); s.setAttribute('preserveAspectRatio', 'none');
+    s.setAttribute('aria-hidden', 'true');
+    s.innerHTML = html || '';
+    (textos || []).forEach(function (t) {
+      var el = document.createElementNS(SVGNS, 'text');
+      el.setAttribute('x', t.x); el.setAttribute('y', t.y); el.setAttribute('font-size', t.size);
+      el.setAttribute('fill', t.fill); el.setAttribute('text-anchor', 'middle');
+      el.setAttribute('font-family', NATAL.FONTES[t.font]);
+      if (t.italic) el.setAttribute('font-style', 'italic');
+      if (t.rot) el.setAttribute('transform', 'rotate(' + t.rot + ' ' + t.x + ' ' + t.y + ')');
+      el.textContent = t.s;
+      s.appendChild(el);
+    });
+    return s;
+  }
+
+  // Monta o ímã (moldura + foto) dentro de "el". Devolve o <img> da foto (ou null).
+  function montarIma(el, f, c) {
+    if (c.temMoldura) el.appendChild(svgCamada(c.viewBox, c.mold.fundo));
+    var jan = document.createElement('div'); jan.className = 'janela';
+    jan.style.left = c.jan.x + '%'; jan.style.top = c.jan.y + '%'; jan.style.width = c.jan.w + '%'; jan.style.height = c.jan.h + '%';
+    jan.style.borderRadius = c.temMoldura ? (c.jan.rx + '% / ' + c.jan.ry + '%') : 'inherit';
+    var im = null;
+    if (f) {
+      im = document.createElement('img'); im.src = f.url; im.alt = '';
+      aplicarCaixa(im, f, c.jan.aspecto); jan.appendChild(im);
+    } else {
+      jan.textContent = '+'; jan.style.fontSize = (c.corte * .12) + 'mm';
+    }
+    el.appendChild(jan);
+    if (c.temMoldura) el.appendChild(svgCamada(c.viewBox, c.mold.frente, c.textosMoldura));
+    return im;
+  }
+
   function render() {
+    if (modo === 'cartoes') return renderCartoes();
     var c = cfg(), main = $('folhas');
     var W = c.papel[0], H = c.papel[1];
     main.innerHTML = '';
     if (!c.porFolha) {
       $('resumo').innerHTML = '<strong>Não cabe na folha.</strong> Diminua o corte, o espaço ou a margem.';
-      return;
+      editor(); return;
     }
     var nFolhas = Math.max(1, Math.ceil(fotos.length / c.porFolha));
     var preenchidas = fotos.filter(Boolean).length;
     $('resumo').innerHTML = '<strong>' + c.porFolha + ' ímãs por folha</strong> (' + c.cols + ' × ' + (c.gRegua ? c.rowsRegua : c.rows) + ')<br>' +
       'Papel cortado ' + fmt(c.corte) + ' mm · ímã pronto ' + fmt(c.final) + ' mm' +
-      (c.corte > c.final ? '<br>Dobra por trás: ' + fmt((c.corte - c.final) / 2) + ' mm de cada lado' : '') +
+      (c.corte > c.final ? '<br>Dobra por trás: ' + fmt(c.dobra) + ' mm de cada lado' : '') +
+      (c.temMoldura ? '<br>Moldura: ' + c.mold.nome : '') +
       '<br>' + preenchidas + (preenchidas === 1 ? ' foto' : ' fotos') + ' em ' + nFolhas + (nFolhas === 1 ? ' folha' : ' folhas');
 
-    // escala de tela: cabe na largura disponível
-    var disp = Math.min(main.clientWidth - 40, 760);
-    var escala = Math.min(1, disp / (W * 3.7795));
-
+    var escala = escalaTela(W);
     for (var p = 0; p < nFolhas; p++) {
-      var wrap = document.createElement('div'); wrap.className = 'folha-wrap';
-      var tit = document.createElement('div'); tit.className = 'folha-titulo';
-      tit.textContent = 'Folha ' + (p + 1) + ' de ' + nFolhas;
-      var sheet = document.createElement('div'); sheet.className = 'sheet' + (c.gCorte ? '' : ' sem-guias-corte');
-      sheet.style.width = W + 'mm'; sheet.style.height = H + 'mm';
-      sheet.style.zoom = escala; // só na tela; na impressão volta ao tamanho real
-      sheet.dataset.escala = escala;
+      var sheet = novaFolha(main, p, nFolhas, W, H, c, escala);
       for (var i = 0; i < c.porFolha; i++) {
         var idx = p * c.porFolha + i;
         var col = i % c.cols, row = Math.floor(i / c.cols);
         var cell = document.createElement('div');
-        cell.className = 'cell'; cell.dataset.i = idx;
+        cell.className = 'cell' + (c.temMoldura ? ' moldura' : ''); cell.dataset.i = idx;
         cell.style.left = (c.x0 + col * (c.corte + c.espaco)) + 'mm';
         cell.style.top = (c.y0 + row * (c.corte + c.espaco)) + 'mm';
         cell.style.width = cell.style.height = c.corte + 'mm';
-        cell.style.borderRadius = Math.min(c.raio + (c.corte - c.final) / 2, c.corte / 2) * (c.raio ? 1 : 0) + 'mm';
+        cell.style.borderRadius = c.raioCelula + 'mm';
         cell.setAttribute('role', 'button'); cell.tabIndex = 0;
         var f = fotos[idx];
-        if (f) {
-          var b = caixa(f), im = document.createElement('img');
-          im.src = f.url; im.alt = '';
-          im.style.width = b.w + '%'; im.style.height = b.h + '%'; im.style.left = b.l + '%'; im.style.top = b.t + '%';
-          cell.appendChild(im); cell.classList.add('tem-foto');
-          cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': selecionar para ajustar');
-        } else {
-          cell.classList.add('vazia'); cell.textContent = '+';
-          cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': adicionar foto');
-        }
+        montarIma(cell, f, c);
+        if (f) { cell.classList.add('tem-foto'); cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': selecionar para ajustar'); }
+        else { cell.classList.add('vazia'); cell.setAttribute('aria-label', 'Ímã ' + (idx + 1) + ': adicionar foto'); }
         if (c.gCorte) { var gc = document.createElement('span'); gc.className = 'guia-corte'; gc.style.borderRadius = 'inherit'; cell.appendChild(gc); }
         if (c.gFinal && c.corte > c.final) {
           var gf = document.createElement('span'); gf.className = 'guia-final';
-          var d = (c.corte - c.final) / 2;
-          gf.style.left = gf.style.top = d + 'mm'; gf.style.width = gf.style.height = c.final + 'mm';
+          gf.style.left = gf.style.top = c.dobra + 'mm'; gf.style.width = gf.style.height = c.final + 'mm';
           gf.style.borderRadius = c.raio + 'mm';
           cell.appendChild(gf);
         }
         if (idx === sel) cell.classList.add('sel');
-        ligar(cell, idx, escala);
+        ligar(cell, idx);
         sheet.appendChild(cell);
       }
-      if (c.gRegua) {
+      if (c.gRegua && c.y0 + c.gridH + 7 < H) {
         var r = document.createElement('div'); r.className = 'regua';
         r.style.left = c.x0 + 'mm'; r.style.top = (c.y0 + c.gridH + 4) + 'mm';
         r.innerHTML = '<i style="width:50mm"></i><span>confira: esta linha deve medir 5 cm</span>';
-        if (c.y0 + c.gridH + 7 < H) sheet.appendChild(r);
+        sheet.appendChild(r);
       }
-      wrap.appendChild(tit); wrap.appendChild(sheet); main.appendChild(wrap);
     }
+    prevChave = '';
     editor();
+  }
+
+  function escalaTela(W) {
+    var main = $('folhas'), disp = Math.min(main.clientWidth - 40, 760);
+    return Math.min(1, disp / (W * 3.7795));
+  }
+  function novaFolha(main, p, n, W, H, c, escala) {
+    var wrap = document.createElement('div'); wrap.className = 'folha-wrap';
+    var tit = document.createElement('div'); tit.className = 'folha-titulo';
+    tit.textContent = 'Folha ' + (p + 1) + ' de ' + n;
+    var sheet = document.createElement('div'); sheet.className = 'sheet' + (c.gCorte ? '' : ' sem-guias-corte');
+    sheet.style.width = W + 'mm'; sheet.style.height = H + 'mm';
+    sheet.style.zoom = escala; // só na tela; na impressão volta ao tamanho real
+    sheet.dataset.escala = escala;
+    wrap.appendChild(tit); wrap.appendChild(sheet); main.appendChild(wrap);
+    return sheet;
+  }
+
+  // ---------- Cartões de Natal ----------
+  function cfgCartoes() {
+    var c = cfg(), W = c.papel[0], H = c.papel[1], cw = CARTAO.w, ch = CARTAO.h, g = CARTAO.espaco, m = CARTAO.margem;
+    var k = {
+      papel: c.papel, gCorte: c.gCorte, final: Math.min(c.final, 80), raio: c.raio,
+      modelo: NATAL.CARTOES[$('cartao-modelo').value],
+      qtd: Math.max(1, Math.min(200, parseInt($('c-qtd').value, 10) || 1)),
+      vaga: $('c-vaga').checked
+    };
+    k.cols = Math.max(0, Math.floor((W - 2 * m + g) / (cw + g)));
+    k.rows = Math.max(0, Math.floor((H - 2 * m + g) / (ch + g)));
+    k.porFolha = k.cols * k.rows;
+    k.x0 = (W - (k.cols * (cw + g) - g)) / 2; k.y0 = (H - (k.rows * (ch + g) - g)) / 2;
+    k.textos = NATAL.textos(k.modelo, { titulo: $('c-titulo').value, frase1: $('c-frase1').value, frase2: $('c-frase2').value, assinatura: $('c-assinatura').value });
+    k.svg = k.modelo.fundo + (k.vaga ? vagaSvg(k) : '');
+    return k;
+  }
+  function vagaSvg(k) {
+    var F = k.final, x = (CARTAO.w - F) / 2, y = 52, v = k.modelo.vaga;
+    return '<rect x="' + x + '" y="' + y + '" width="' + F + '" height="' + F + '" rx="' + k.raio + '" fill="' + v.fundo + '" stroke="' + v.cor + '" stroke-width=".4" stroke-dasharray="1.4 1"/>';
+  }
+  function renderCartoes() {
+    var k = cfgCartoes(), main = $('folhas'), W = k.papel[0], H = k.papel[1];
+    main.innerHTML = '';
+    sel = -1; editor();
+    if (!k.porFolha) { $('resumo').innerHTML = '<strong>O cartão de 10 x 14 cm não cabe neste papel.</strong> Use A4 ou Carta.'; return; }
+    var nFolhas = Math.ceil(k.qtd / k.porFolha);
+    $('resumo').innerHTML = '<strong>' + k.porFolha + (k.porFolha === 1 ? ' cartão' : ' cartões') + ' por folha</strong> (' + k.cols + ' × ' + k.rows + ')<br>' +
+      'Cartão 10 x 14 cm · lugar do ímã ' + fmt(k.final) + ' mm<br>' + k.qtd + (k.qtd === 1 ? ' cartão' : ' cartões') + ' em ' + nFolhas + (nFolhas === 1 ? ' folha' : ' folhas');
+    var escala = escalaTela(W);
+    for (var p = 0; p < nFolhas; p++) {
+      var sheet = novaFolha(main, p, nFolhas, W, H, k, escala);
+      for (var i = 0; i < k.porFolha && p * k.porFolha + i < k.qtd; i++) {
+        var col = i % k.cols, row = Math.floor(i / k.cols);
+        var el = document.createElement('div'); el.className = 'cartao';
+        el.style.left = (k.x0 + col * (CARTAO.w + CARTAO.espaco)) + 'mm'; el.style.top = (k.y0 + row * (CARTAO.h + CARTAO.espaco)) + 'mm';
+        el.style.width = CARTAO.w + 'mm'; el.style.height = CARTAO.h + 'mm';
+        el.appendChild(svgCamada('0 0 ' + CARTAO.w + ' ' + CARTAO.h, k.svg, k.textos));
+        if (k.gCorte) { var gc = document.createElement('span'); gc.className = 'guia-corte'; el.appendChild(gc); }
+        sheet.appendChild(el);
+      }
+    }
   }
 
   function fmt(n) { return String(Math.round(n * 10) / 10).replace('.', ','); }
 
-  function ligar(cell, idx, escala) {
+  // ---------- Interação com os ímãs ----------
+  function ligar(cell, idx) {
     cell.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clique(idx); } });
     var ini = null, moveu = false;
     cell.addEventListener('pointerdown', function (e) {
@@ -305,12 +458,12 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     });
     cell.addEventListener('pointermove', function (e) {
       if (!ini) return;
-      var f = fotos[idx], lado = cell.getBoundingClientRect().width || 1;
-      var dx = (e.clientX - ini.x) / lado * 100, dy = (e.clientY - ini.y) / lado * 100;
+      var f = fotos[idx], jan = cell.querySelector('.janela').getBoundingClientRect(), c = cfg();
+      var dx = (e.clientX - ini.x) / (jan.width || 1) * 100, dy = (e.clientY - ini.y) / (jan.height || 1) * 100;
       if (Math.abs(dx) + Math.abs(dy) > 1) moveu = true;
       // a foto acompanha o dedo/mouse livremente, para qualquer lado
-      f.dx = ini.dx + dx; f.dy = ini.dy + dy; limitar(f);
-      aplicarCaixa(cell.querySelector('img'), f);
+      f.dx = ini.dx + dx; f.dy = ini.dy + dy; limitar(f, c.jan.aspecto);
+      aplicarCaixa(cell.querySelector('.janela img'), f, c.jan.aspecto);
       if (idx === sel) atualizarPreview();
     });
     cell.addEventListener('pointerup', function () {
@@ -318,7 +471,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
       if (era && moveu) { if (sel !== idx) { sel = idx; marcar(); editor(); } return; }
       clique(idx);
     });
-    cell.addEventListener('click', function (e) {
+    cell.addEventListener('click', function () {
       // toque sem pointerdown registrado (foto ainda não selecionada) também seleciona
       if (fotos[idx] && sel !== idx) clique(idx);
     });
@@ -334,7 +487,7 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     var c = document.querySelector('.cell[data-i="' + sel + '"]'); if (c) c.classList.add('sel');
   }
   function editor() {
-    var f = fotos[sel];
+    var f = modo === 'imas' ? fotos[sel] : null;
     $('editor').hidden = !f;
     if (!f) return;
     $('editor-titulo').textContent = 'Ímã ' + (sel + 1);
@@ -417,83 +570,180 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
   }
   $('modelo').addEventListener('change', aplicarModelo);
   campos.forEach(function (k) { $(k).addEventListener('input', function () { $('modelo').value = 'custom'; render(); }); });
-  ['papel', 'g-corte', 'g-final', 'g-regua'].forEach(function (k) { $(k).addEventListener('change', render); });
+  ['papel', 'g-corte', 'g-final', 'g-regua', 'moldura', 'cartao-modelo', 'c-vaga'].forEach(function (k) { $(k).addEventListener('change', render); });
+  var adiar;
+  ['moldura-texto', 'c-titulo', 'c-frase1', 'c-frase2', 'c-assinatura', 'c-qtd'].forEach(function (k) {
+    $(k).addEventListener('input', function () { clearTimeout(adiar); adiar = setTimeout(render, 200); });
+  });
+  $('moldura').addEventListener('change', function () { $('moldura-texto-campo').hidden = !NATAL.MOLDURAS[this.value].janela; });
   window.addEventListener('resize', function () { clearTimeout(window.__r); window.__r = setTimeout(render, 150); });
 
+  // Abas Ímãs / Cartões
+  function trocarModo(m) {
+    modo = m;
+    $('aba-imas').setAttribute('aria-selected', String(m === 'imas'));
+    $('aba-cartoes').setAttribute('aria-selected', String(m === 'cartoes'));
+    $('painel-imas').hidden = m !== 'imas'; $('painel-cartoes').hidden = m !== 'cartoes';
+    document.querySelectorAll('.so-imas').forEach(function (el) { el.hidden = m !== 'imas'; });
+    render();
+  }
+  $('aba-imas').addEventListener('click', function () { trocarModo('imas'); });
+  $('aba-cartoes').addEventListener('click', function () { trocarModo('cartoes'); });
+  ['aba-imas', 'aba-cartoes'].forEach(function (id) {
+    $(id).addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var o = id === 'aba-imas' ? 'aba-cartoes' : 'aba-imas'; $(o).focus(); $(o).click(); }
+    });
+  });
+
   // Impressão: tira o zoom de tela para sair em tamanho real
-  $('imprimir').addEventListener('click', function () { window.print(); });
+  $('imprimir').addEventListener('click', function () {
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { window.print(); });
+  });
   window.addEventListener('beforeprint', function () { document.querySelectorAll('.sheet').forEach(function (s) { s.style.zoom = 1; }); });
   window.addEventListener('afterprint', function () { document.querySelectorAll('.sheet').forEach(function (s) { s.style.zoom = s.dataset.escala; }); });
 
-  // Exporta cada folha como PNG em 300 dpi (para mandar para gráfica ou abrir no Canva)
+  // ---------- Imagem 300 dpi (para gráfica ou Canva) ----------
+  function carregarImg(src) {
+    return new Promise(function (ok) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { ok(null); }; im.src = src; });
+  }
+  function svgImg(viewBox, html, wPx, hPx) {
+    var s = '<svg xmlns="' + SVGNS + '" viewBox="' + viewBox + '" width="' + wPx + '" height="' + hPx + '" preserveAspectRatio="none">' + html + '</svg>';
+    return carregarImg('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s));
+  }
+  function caminho(x, X, Y, W, H, r) {
+    x.beginPath();
+    if (!r) { x.rect(X, Y, W, H); return; }
+    r = Math.min(r, W / 2, H / 2);
+    x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r);
+    x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath();
+  }
+  function textoCanvas(x, t, X, Y, k) {
+    x.save(); x.translate(X, Y); if (t.rot) x.rotate(t.rot * Math.PI / 180);
+    x.font = (t.italic ? 'italic ' : '') + (t.font === 'serif' ? '500 ' : '') + (t.size * k) + 'px ' + NATAL.FONTES[t.font];
+    x.fillStyle = t.fill; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+    x.fillText(t.s, 0, 0); x.restore();
+  }
+  function baixarCanvas(cv, nome) {
+    cv.toBlob(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = nome;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    }, 'image/png');
+  }
+  function fontesProntas() {
+    if (!document.fonts || !document.fonts.load) return Promise.resolve();
+    return Promise.all(['40px "Great Vibes"', 'italic 500 40px "Lora"', '500 40px "Lora"'].map(function (f) { return document.fonts.load(f).catch(function () {}); }));
+  }
+  var DPMM = 300 / 25.4;
+
   $('baixar').addEventListener('click', function () {
+    fontesProntas().then(function () { return modo === 'cartoes' ? baixarCartoes() : baixarImas(); });
+  });
+
+  function baixarImas() {
     var c = cfg(); if (!c.porFolha) return;
-    var dpmm = 300 / 25.4, W = c.papel[0], H = c.papel[1];
+    var W = c.papel[0], H = c.papel[1], S = Math.round(c.corte * DPMM);
     var nFolhas = Math.max(1, Math.ceil(fotos.length / c.porFolha));
+    var urls = {}; fotos.forEach(function (f) { if (f) urls[f.url] = 1; });
     var imgs = {};
-    var urls = fotos.filter(Boolean).map(function (f) { return f.url; });
-    Promise.all(urls.map(function (u) {
-      return new Promise(function (ok) { if (imgs[u]) return ok(); var im = new Image(); im.onload = function () { imgs[u] = im; ok(); }; im.src = u; });
-    })).then(function () {
-      for (var p = 0; p < nFolhas; p++) desenharFolha(p);
-    });
-    function desenharFolha(p) {
+    return Promise.all(Object.keys(urls).map(function (u) { return carregarImg(u).then(function (im) { imgs[u] = im; }); }))
+      .then(function () {
+        return c.temMoldura ? Promise.all([svgImg(c.viewBox, c.mold.fundo, S, S), svgImg(c.viewBox, c.mold.frente, S, S)]) : [null, null];
+      })
+      .then(function (camadas) {
+        for (var p = 0; p < nFolhas; p++) desenharFolha(p, camadas[0], camadas[1]);
+      });
+
+    function desenharFolha(p, fundo, frente) {
       var cv = document.createElement('canvas');
-      cv.width = Math.round(W * dpmm); cv.height = Math.round(H * dpmm);
+      cv.width = Math.round(W * DPMM); cv.height = Math.round(H * DPMM);
       var x = cv.getContext('2d');
       x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height);
+      var k = c.final / 100 * DPMM, ox = c.dobra * DPMM;
       for (var i = 0; i < c.porFolha; i++) {
         var f = fotos[p * c.porFolha + i]; if (!f) continue;
         var col = i % c.cols, row = Math.floor(i / c.cols);
-        var cx = (c.x0 + col * (c.corte + c.espaco)) * dpmm, cy = (c.y0 + row * (c.corte + c.espaco)) * dpmm, S = c.corte * dpmm;
-        var raio = c.raio ? Math.min(c.raio + (c.corte - c.final) / 2, c.corte / 2) * dpmm : 0;
-        x.save(); caminho(x, cx, cy, S, raio); x.clip();
-        var b = caixa(f);
-        x.drawImage(imgs[f.url], cx + b.l / 100 * S, cy + b.t / 100 * S, b.w / 100 * S, b.h / 100 * S);
+        var cx = (c.x0 + col * (c.corte + c.espaco)) * DPMM, cy = (c.y0 + row * (c.corte + c.espaco)) * DPMM, L = c.corte * DPMM;
+        var raio = c.raioCelula * DPMM;
+        x.save(); caminho(x, cx, cy, L, L, raio); x.clip();
+        if (fundo) x.drawImage(fundo, cx, cy, L, L);
+        // janela da foto
+        var jx = cx + c.jan.x / 100 * L, jy = cy + c.jan.y / 100 * L, jw = c.jan.w / 100 * L, jh = c.jan.h / 100 * L;
+        x.save();
+        caminho(x, jx, jy, jw, jh, c.temMoldura ? c.mold.janela.r * k : 0); x.clip();
+        x.fillStyle = '#fff'; x.fillRect(jx, jy, jw, jh);
+        var b = caixa(f, c.jan.aspecto);
+        if (imgs[f.url]) x.drawImage(imgs[f.url], jx + b.l / 100 * jw, jy + b.t / 100 * jh, b.w / 100 * jw, b.h / 100 * jh);
         x.restore();
-        if (c.gCorte) { x.save(); x.strokeStyle = '#9AA4AA'; x.lineWidth = 0.25 * dpmm; caminho(x, cx, cy, S, raio); x.stroke(); x.restore(); }
+        if (frente) x.drawImage(frente, cx, cy, L, L);
+        c.textosMoldura.forEach(function (t) { textoCanvas(x, t, cx + ox + t.x * k, cy + ox + t.y * k, k); });
+        x.restore();
+        if (c.gCorte) { x.save(); x.strokeStyle = '#9AA4AA'; x.lineWidth = 0.25 * DPMM; caminho(x, cx, cy, L, L, raio); x.stroke(); x.restore(); }
       }
       if (c.gRegua && c.y0 + c.gridH + 7 < H) {
-        var ry = (c.y0 + c.gridH + 4) * dpmm, rx = c.x0 * dpmm, rl = 50 * dpmm;
-        x.strokeStyle = '#7A8489'; x.lineWidth = 0.3 * dpmm;
+        var ry = (c.y0 + c.gridH + 4) * DPMM, rx = c.x0 * DPMM, rl = 50 * DPMM;
+        x.strokeStyle = '#7A8489'; x.lineWidth = 0.3 * DPMM;
         x.beginPath(); x.moveTo(rx, ry); x.lineTo(rx + rl, ry);
-        x.moveTo(rx, ry - dpmm); x.lineTo(rx, ry + dpmm); x.moveTo(rx + rl, ry - dpmm); x.lineTo(rx + rl, ry + dpmm); x.stroke();
-        x.fillStyle = '#7A8489'; x.font = (2.4 * dpmm) + 'px DM Sans, sans-serif'; x.textBaseline = 'middle';
-        x.fillText('confira: esta linha deve medir 5 cm', rx + rl + 2 * dpmm, ry);
+        x.moveTo(rx, ry - DPMM); x.lineTo(rx, ry + DPMM); x.moveTo(rx + rl, ry - DPMM); x.lineTo(rx + rl, ry + DPMM); x.stroke();
+        x.fillStyle = '#7A8489'; x.font = (2.4 * DPMM) + 'px "DM Sans", sans-serif'; x.textBaseline = 'middle';
+        x.fillText('confira: esta linha deve medir 5 cm', rx + rl + 2 * DPMM, ry);
       }
-      cv.toBlob(function (blob) {
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'gabarito-imas-folha-' + (p + 1) + '.png';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
-      }, 'image/png');
+      baixarCanvas(cv, 'gabarito-imas-folha-' + (p + 1) + '.png');
     }
-    function caminho(x, X, Y, S, r) {
-      x.beginPath();
-      if (!r) { x.rect(X, Y, S, S); return; }
-      x.moveTo(X + r, Y); x.arcTo(X + S, Y, X + S, Y + S, r); x.arcTo(X + S, Y + S, X, Y + S, r);
-      x.arcTo(X, Y + S, X, Y, r); x.arcTo(X, Y, X + S, Y, r); x.closePath();
-    }
-  });
+  }
 
-  // Quadro grande de ajuste: mostra o ímã selecionado ampliado; 1 dedo arrasta, 2 dedos dão zoom
+  function baixarCartoes() {
+    var k = cfgCartoes(); if (!k.porFolha) return;
+    var W = k.papel[0], H = k.papel[1], cw = CARTAO.w * DPMM, ch = CARTAO.h * DPMM;
+    var nFolhas = Math.ceil(k.qtd / k.porFolha);
+    return svgImg('0 0 ' + CARTAO.w + ' ' + CARTAO.h, k.svg, Math.round(cw), Math.round(ch)).then(function (arte) {
+      for (var p = 0; p < nFolhas; p++) {
+        var cv = document.createElement('canvas');
+        cv.width = Math.round(W * DPMM); cv.height = Math.round(H * DPMM);
+        var x = cv.getContext('2d');
+        x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height);
+        for (var i = 0; i < k.porFolha && p * k.porFolha + i < k.qtd; i++) {
+          var col = i % k.cols, row = Math.floor(i / k.cols);
+          var X = (k.x0 + col * (CARTAO.w + CARTAO.espaco)) * DPMM, Y = (k.y0 + row * (CARTAO.h + CARTAO.espaco)) * DPMM;
+          x.save(); x.beginPath(); x.rect(X, Y, cw, ch); x.clip();
+          if (arte) x.drawImage(arte, X, Y, cw, ch);
+          k.textos.forEach(function (t) { textoCanvas(x, t, X + t.x * DPMM, Y + t.y * DPMM, DPMM); });
+          x.restore();
+          if (k.gCorte) { x.strokeStyle = '#9AA4AA'; x.lineWidth = 0.25 * DPMM; x.strokeRect(X, Y, cw, ch); }
+        }
+        baixarCanvas(cv, 'cartoes-natal-folha-' + (p + 1) + '.png');
+      }
+    });
+  }
+
+  // ---------- Quadro grande de ajuste ----------
+  var prevChave = '', prevImg = null;
   function atualizarPreview() {
     var f = fotos[sel]; if (!f) return;
-    var c = cfg(), im = $('prev-img'), fin = $('prev-final');
-    if (im.getAttribute('src') !== f.url) im.src = f.url;
-    aplicarCaixa(im, f);
-    var d = (c.corte - c.final) / 2 / c.corte * 100;
-    fin.style.left = fin.style.top = d + '%';
-    fin.style.width = fin.style.height = (c.final / c.corte * 100) + '%';
-    fin.style.borderRadius = c.raio ? (c.raio / c.final * 100) + '%' : '0';
-    fin.style.display = c.corte > c.final ? '' : 'none';
-    $('preview').style.borderRadius = c.raio ? Math.min(c.raio + (c.corte - c.final) / 2, c.corte / 2) / c.corte * 100 + '%' : '0';
+    var c = cfg(), pv = $('preview');
+    var chave = sel + '|' + f.url + '|' + $('moldura').value + '|' + $('moldura-texto').value + '|' + c.final + '|' + c.corte + '|' + c.raio;
+    if (chave !== prevChave) {
+      prevChave = chave;
+      pv.innerHTML = '';
+      pv.style.borderRadius = c.raioCelula / c.corte * 100 + '%';
+      prevImg = montarIma(pv, f, c);
+      if (c.corte > c.final) {
+        var fin = document.createElement('span'); fin.className = 'prev-final'; fin.setAttribute('aria-hidden', 'true');
+        var d = c.dobra / c.corte * 100;
+        fin.style.left = fin.style.top = d + '%';
+        fin.style.width = fin.style.height = (c.final / c.corte * 100) + '%';
+        fin.style.borderRadius = c.raio ? (c.raio / c.final * 100) + '%' : '0';
+        pv.appendChild(fin);
+      }
+    } else {
+      aplicarCaixa(prevImg, f, c.jan.aspecto);
+    }
   }
   function mudou(f) {
-    limitar(f);
-    var ci = document.querySelector('.cell[data-i="' + sel + '"] img');
-    if (ci) aplicarCaixa(ci, f);
+    var c = cfg();
+    limitar(f, c.jan.aspecto);
+    aplicarCaixa(document.querySelector('.cell[data-i="' + sel + '"] .janela img'), f, c.jan.aspecto);
     $('zoom').value = Math.round(f.zoom * 100);
     $('zoom-valor').textContent = Math.round(f.zoom * 100) + '%';
     atualizarPreview();
@@ -517,15 +767,16 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     pv.addEventListener('pointermove', function (e) {
       if (!toques[e.pointerId] || !ini) return;
       toques[e.pointerId] = { x: e.clientX, y: e.clientY };
-      var f = fotos[sel], lado = pv.getBoundingClientRect().width || 1, p = lista();
+      var f = fotos[sel], janEl = pv.querySelector('.janela'), r = (janEl || pv).getBoundingClientRect(), p = lista();
+      var lw = r.width || 1, lh = r.height || 1;
       if (p.length >= 2 && ini.dist) {
         var dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
         f.zoom = Math.max(0.2, Math.min(4, ini.zoom * dist / ini.dist));
         var mx = (p[0].x + p[1].x) / 2 - (ini.pts[0].x + ini.pts[1].x) / 2, my = (p[0].y + p[1].y) / 2 - (ini.pts[0].y + ini.pts[1].y) / 2;
-        f.dx = ini.dx + mx / lado * 100; f.dy = ini.dy + my / lado * 100;
+        f.dx = ini.dx + mx / lw * 100; f.dy = ini.dy + my / lh * 100;
       } else {
-        f.dx = ini.dx + (p[0].x - ini.pts[0].x) / lado * 100;
-        f.dy = ini.dy + (p[0].y - ini.pts[0].y) / lado * 100;
+        f.dx = ini.dx + (p[0].x - ini.pts[0].x) / lw * 100;
+        f.dy = ini.dy + (p[0].y - ini.pts[0].y) / lh * 100;
       }
       mudou(f);
     });
@@ -549,7 +800,10 @@ main{padding:28px;display:flex;flex-direction:column;align-items:center;gap:28px
     navigator.serviceWorker.register('sw.js').catch(function () {});
   }
 
+  $('moldura-texto-campo').hidden = true;
   aplicarModelo();
+  // redesenha quando as fontes de Natal terminarem de carregar
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { render(); });
 })();
 </script>
 </body>
