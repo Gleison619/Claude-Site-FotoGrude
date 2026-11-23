@@ -8,7 +8,7 @@ var LOJA = {
   whatsapp: "5531982598701",
 
   // Pix
-  pixChave: "7be4968e-5d7f-49c7-9a2a-01c2f83b7179",  // chave aleatória
+  pixChave: "15abf738-ed55-432b-b771-fbf7971fe612",  // chave aleatória
   pixNome: "Gleison Felix",  // nome que aparece no app do banco ao pagar
 
   // Link do Mercado Pago de VALOR LIVRE (o cliente digita o total).
