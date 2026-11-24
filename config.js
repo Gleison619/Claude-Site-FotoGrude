@@ -33,6 +33,18 @@ var LOJA = {
   }
 };
 
+/* Brinde: a partir de "minimo" ímãs no pedido, o cliente ganha 1 ímã de Natal de tema sortido.
+   Para desligar: ativo: false. Depois do "ate", some sozinho do site. */
+var BRINDE = {
+  ativo: true,
+  minimo: 6,
+  texto: "1 ímã de Natal de brinde (tema sortido)",
+  ate: "2026-12-31T23:59:59-03:00"
+};
+function brindeAtivo() {
+  return !!(BRINDE && BRINDE.ativo && new Date(BRINDE.ate).getTime() > Date.now());
+}
+
 /* Promoção / aviso com contagem regressiva (faixa no topo do site).
    Para desligar: ativa: false. Depois do "ate", a faixa some sozinha. */
 var PROMO = {

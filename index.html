@@ -282,7 +282,17 @@ section.block{padding:96px 24px}
 .gift{background:#fff;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:8px}
 .gift h3{font-size:18px}
 .gift p{font-size:15px;line-height:1.5;color:var(--muted)}
-.frete-gratis{display:flex;gap:16px;align-items:flex-start;background:#F1FAF4;border:1.5px solid #1F8F4E;border-radius:18px;padding:18px 20px;margin:-16px 0 32px;color:#14633A;max-width:760px}
+.vantagens{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin:-16px 0 32px}
+.frete-gratis{display:flex;gap:16px;align-items:flex-start;background:#F1FAF4;border:1.5px solid #1F8F4E;border-radius:18px;padding:18px 20px;color:#14633A}
+.brinde-box{display:flex;gap:16px;align-items:flex-start;background:#FFF5F0;border:1.5px solid #B3122E;border-radius:18px;padding:18px 20px;color:#B3122E}
+.brinde-box[hidden]{display:none}
+.brinde-box svg{flex:none;margin-top:2px}
+.brinde-box strong{display:block;font-size:18px;color:#B3122E;margin-bottom:4px}
+.brinde-box p{margin:0;font-size:16px;line-height:1.55;color:var(--ink)}
+.brinde-box b{color:#B3122E}
+.plan .brinde-tag{align-self:flex-start;background:#FFF0E6;color:#A3122A;font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px;margin-top:-6px}
+.plan.featured .brinde-tag{background:#fff;color:#A3122A}
+.plan .brinde-tag[hidden]{display:none}
 .frete-gratis svg{flex:none;margin-top:2px}
 .frete-gratis strong{display:block;font-size:18px;color:#14633A;margin-bottom:4px}
 .frete-gratis p{margin:0;font-size:16px;line-height:1.55;color:var(--ink)}
@@ -401,7 +411,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
 <body>
 
 <!-- Configuração (WhatsApp, Pix e links de pagamento) fica no arquivo config.js -->
-<script src="config.js?v=9"></script>
+<script src="config.js?v=10"></script>
 <script>
   var WHATSAPP = LOJA.whatsapp;
 </script>
@@ -563,6 +573,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
         <h2>Escolha seu pacote</h2>
         <p>Cada ímã tem 5x5 cm e cada um pode ter uma foto diferente. Quanto maior o kit, menor o preço por ímã. A economia mostrada é em relação ao ímã avulso (R$ 7,90).</p>
       </div>
+      <div class="vantagens">
       <div class="frete-gratis" role="note">
         <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
         <div>
@@ -570,6 +581,14 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p><b>Conselheiro Lafaiete:</b> a partir de 6 ímãs (Kit Mini ou maior).<br>
           <b>Congonhas, Ouro Branco, Itaverava e Queluzito:</b> a partir de 10 ímãs (Kit Memórias).</p>
         </div>
+      </div>
+      <div class="brinde-box" id="brinde-box" role="note" hidden>
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
+        <div>
+          <strong>Ganhe um ímã de Natal de brinde</strong>
+          <p>Comprando <b id="brinde-minimo">6</b> ímãs ou mais, você ganha <b>1 ímã de Natal</b> com tema sortido: Papai Noel, presépio, árvore, rena e outros. <span id="brinde-validade"></span></p>
+        </div>
+      </div>
       </div>
       <div class="grid plans">
         <div class="plan side">
@@ -588,6 +607,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="price">R$ 39,00</p>
           <p class="unit">R$ 6,50 cada ímã</p>
           <p class="save">Economize R$ 8,40 (17%)</p>
+          <p class="brinde-tag" hidden>+ 1 ímã de Natal de brinde</p>
           <p class="desc">Ideal para lembrancinha ou para experimentar.</p>
           <a class="btn" href="pedido.html?kit=mini">Quero este</a>
         </div>
@@ -598,6 +618,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="price">R$ 55,80</p>
           <p class="unit">R$ 6,20 cada ímã</p>
           <p class="save">Economize R$ 15,30 (21%)</p>
+          <p class="brinde-tag" hidden>+ 1 ímã de Natal de brinde</p>
           <p class="desc">O favorito: monta um quadrado perfeito na geladeira.</p>
           <a class="btn" href="pedido.html?kit=familia">Quero este</a>
         </div>
@@ -608,6 +629,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
           <p class="price">R$ 72,00</p>
           <p class="unit">R$ 6,00 cada ímã · melhor preço</p>
           <p class="save">Economize R$ 22,80 (24%)</p>
+          <p class="brinde-tag" hidden>+ 1 ímã de Natal de brinde</p>
           <p class="desc">Para quem tem muitas fotos especiais e não consegue escolher.</p>
           <a class="btn" href="pedido.html?kit=memorias">Quero este</a>
         </div>
@@ -656,6 +678,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
       <h2>Dúvidas frequentes</h2>
       <div class="faq-list">
         <details><summary>Que tipo de foto eu posso mandar?</summary><p>Fotos do celular funcionam muito bem. Evite prints e fotos muito escuras ou tremidas. Se alguma não ficar boa, avisamos antes de imprimir.</p></details>
+        <details id="faq-brinde" hidden><summary>Como funciona o ímã de Natal de brinde?</summary><p>Comprando 6 ímãs ou mais no mesmo pedido, você ganha 1 ímã de Natal a mais, com tema sortido (Papai Noel, presépio, árvore, rena, sinos e outros). Ele vai junto com o seu pedido, sem custo.</p></details>
         <details><summary>Posso comprar só um ímã?</summary><p>Pode! O ímã avulso sai por R$ 7,90 cada. Nos kits o valor por ímã fica mais em conta: R$ 6,50 (6 ímãs), R$ 6,20 (9 ímãs) e R$ 6,00 (12 ímãs).</p></details>
         <details><summary>Posso misturar fotos diferentes no mesmo kit?</summary><p>Pode! Cada ímã pode ter uma foto diferente.</p></details>
         <details><summary>Quanto tempo demora?</summary><p>A produção leva 3 dias úteis após o envio das fotos, mais o prazo de entrega da sua região.</p></details>
@@ -884,6 +907,22 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
       grade.appendChild(card);
     });
     secao.hidden = false;
+  })();
+
+  // Brinde de Natal a partir de X ímãs (some sozinho depois do prazo do config.js)
+  (function () {
+    if (typeof brindeAtivo !== 'function' || !brindeAtivo()) return;
+    $b('brinde-box').hidden = false;
+    $b('brinde-minimo').textContent = BRINDE.minimo;
+    var fim = new Date(BRINDE.ate);
+    $b('brinde-validade').textContent = 'Válido até ' + String(fim.getDate()).padStart(2, '0') + '/' + String(fim.getMonth() + 1).padStart(2, '0') + '.';
+    // selo nos kits que já dão direito
+    document.querySelectorAll('.plan').forEach(function (p) {
+      var tag = p.querySelector('.brinde-tag'), q = parseInt((p.querySelector('.qty') || {}).textContent, 10);
+      if (tag && q >= BRINDE.minimo) tag.hidden = false;
+    });
+    var faq = $b('faq-brinde'); if (faq) faq.hidden = false;
+    function $b(id) { return document.getElementById(id); }
   })();
 
   // Faixa de promoção com contagem regressiva (some sozinha depois do prazo)

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="config.js?v=9"></script>
+<script src="config.js?v=10"></script>
 <style>
 :root{--accent:#A21F52;--accent-dark:#7A1640;--ink:#1F1A1C;--muted:#4A4246;--bg:#FBFAF7;--pink:#FCE3EC;--line:#E6E0DD;--gold:#F5C04A;--green:#1F8F4E}
 *{box-sizing:border-box}
@@ -75,6 +75,8 @@ main{padding:40px 0 96px}
 .cep-row input{flex:1;min-width:0;min-height:44px;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font:inherit;font-size:16px}
 .cep-row input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
 .cep-row button{min-height:44px;padding:8px 14px;border:0;border-radius:12px;background:var(--ink);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.linha-brinde span:last-child{color:#B3122E;font-weight:700;text-align:right}
+.linha-brinde.pendente span:last-child{color:var(--muted);font-weight:500}
 .cep-msg{font-size:13px;color:var(--muted)}
 .cep-msg:empty{display:none}
 .envio{margin:0;min-width:0}
@@ -225,6 +227,7 @@ main{padding:40px 0 96px}
           <div class="lines">
             <div class="line"><span>Tamanho</span><span>5x5 cm</span></div>
             <div class="line"><span>Produção</span><span>3 dias úteis</span></div>
+            <div class="line linha-brinde" id="linha-brinde" hidden><span>Brinde</span><span id="brinde-txt">1 ímã de Natal</span></div>
             <div class="line"><span>Entrega</span><span id="frete-valor">Escolha abaixo</span></div>
           </div>
           <fieldset class="cep-box envio" id="envio-box" hidden>
@@ -419,8 +422,12 @@ main{padding:40px 0 96px}
     if (semValor()) return o.nome + (curto ? ' · consultar' : ' (frete a consultar, CEP ' + cep + ')');
     return curto ? formatarReais(frete) + ' · ' + o.nome.replace(/ \(Correios\)/, '') : o.nome + ' ' + formatarReais(frete) + ' para CEP ' + cep;
   }
+  // Brinde de Natal a partir de BRINDE.minimo ímãs (config.js)
+  function brindeLigado() { return typeof brindeAtivo === 'function' && brindeAtivo(); }
+  function ganhaBrinde() { return brindeLigado() && qtd >= BRINDE.minimo; }
   function textoPedido() {
     var t = kit.nome + ' (' + qtd + (qtd === 1 ? ' ímã' : ' ímãs') + ' 5x5 cm)';
+    if (ganhaBrinde()) t += ' + brinde: 1 ímã de Natal (tema sortido)';
     var e = textoEnvio(false);
     if (e) t += ' + entrega: ' + e;
     return t + ' - total ' + formatarReais(total());
@@ -451,6 +458,17 @@ main{padding:40px 0 96px}
       el.textContent = 'Você economiza ' + formatarReais(economia) + ' em relação ao avulso';
       el.hidden = false;
     }
+
+    // Brinde de Natal: mostra no resumo; no avulso, avisa quantos faltam
+    var lb = document.getElementById('linha-brinde'), bt = document.getElementById('brinde-txt');
+    if (brindeLigado()) {
+      var faltaB = BRINDE.minimo - qtd;
+      lb.hidden = false;
+      lb.classList.toggle('pendente', faltaB > 0);
+      bt.textContent = faltaB > 0
+        ? (faltaB === 1 ? 'falta 1 ímã' : 'faltam ' + faltaB + ' ímãs') + ' para ganhar 1 ímã de Natal'
+        : '1 ímã de Natal grátis (tema sortido)';
+    } else { lb.hidden = true; }
 
     // Cartão: links do Mercado Pago e/ou InfinitePay quando existem (avulso só com 1 ímã); senão, pedir link no WhatsApp
     var btn = document.getElementById('cartao-btn');
