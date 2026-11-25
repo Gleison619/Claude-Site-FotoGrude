@@ -8,13 +8,13 @@ var LOJA = {
   whatsapp: "5531982598701",
 
   // Pix
-  pixChave: "15abf738-ed55-432b-b771-fbf7971fe612",  // chave aleatória
+  pixChave: "fotogrute@buytoday99.com",  // chave e-mail
   pixNome: "Gleison Felix",  // nome que aparece no app do banco ao pagar
 
   // Link do Mercado Pago de VALOR LIVRE (o cliente digita o total).
   // Serve para todos os kits e qualquer quantidade. Se preenchido, é usado
   // quando não houver um link específico do kit abaixo.
-  mercadoPagoValorLivre: "https://link.mercadopago.com.br/fotogrude99",
+  mercadoPagoValorLivre: "https://link.mercadopago.com.br/70293479gleisonmagno",
 
   // Links de pagamento do Mercado Pago com valor fixo, um por opção (opcional)
   linksCartao: {
